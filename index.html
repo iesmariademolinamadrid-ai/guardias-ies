@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guardias IES</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --ink:#1a1a2e; --paper:#f5f0e8; --paper2:#ede8dc; --paper3:#e4dece;
+  --line:#d0c9b8; --red:#c0392b; --blue:#2471a3; --green:#1e8449;
+  --muted:#8a8070; --r:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0;position:relative;z-index:1;}
+body{font-family:'IBM Plex Mono',monospace;background:var(--paper);color:var(--ink);min-height:100vh;font-size:13px;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");opacity:.5;}
+
+/* HEADER */
+header{background:var(--ink);color:var(--paper);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:54px;border-bottom:3px solid var(--red);gap:12px;flex-wrap:wrap;}
+.logo{font-family:'Instrument Serif',serif;font-size:19px;display:flex;align-items:center;gap:9px;white-space:nowrap;}
+.logo-dot{width:8px;height:8px;background:var(--red);border-radius:50%;flex-shrink:0;}
+.logo sub{font-family:'IBM Plex Mono';font-size:10px;color:#999;}
+.nav{display:flex;gap:2px;flex-wrap:wrap;}
+.nb{padding:5px 12px;border:none;background:transparent;color:#aaa;font-family:'IBM Plex Mono';font-size:11px;cursor:pointer;border-radius:4px;transition:all .12s;text-transform:uppercase;letter-spacing:.05em;}
+.nb:hover{color:var(--paper);background:rgba(255,255,255,.08);}
+.nb.on{color:var(--paper);background:var(--red);}
+.uchip{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:4px 11px 4px 6px;cursor:pointer;transition:background .12s;white-space:nowrap;}
+.uchip:hover{background:rgba(255,255,255,.14);}
+.uav{width:24px;height:24px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:white;flex-shrink:0;}
+.uname{font-size:11px;color:var(--paper);}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:#555;flex-shrink:0;transition:background .3s;}
+.sync-dot.ok{background:#27ae60;}
+.sync-dot.err{background:var(--red);}
+.sync-dot.loading{background:var(--orange, #e67e22);animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* LAYOUT */
+.wrap{max-width:1300px;margin:0 auto;padding:22px 24px;}
+.page{display:none;}.page.on{display:block;animation:fu .18s ease;}
+@keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.ph{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap;}
+.ph-t{font-family:'Instrument Serif',serif;font-size:28px;line-height:1;}
+.ph-s{font-size:11px;color:var(--muted);margin-top:3px;}
+
+/* CARD */
+.card{background:white;border:1px solid var(--line);border-radius:var(--r);margin-bottom:14px;overflow:hidden;}
+.ch{padding:11px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;background:var(--paper2);}
+.ch-t{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
+.cb{padding:16px;}
+
+/* BUTTONS */
+.btn{padding:7px 14px;border-radius:var(--r);border:none;font-family:'IBM Plex Mono';font-size:12px;font-weight:500;cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:5px;}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+.br{background:var(--red);color:white;}.br:hover:not(:disabled){background:#a93226;}
+.bg{background:transparent;color:var(--muted);border:1px solid var(--line);}.bg:hover:not(:disabled){border-color:var(--ink);color:var(--ink);}
+.bgreen{background:var(--green);color:white;}.bgreen:hover:not(:disabled){background:#196f3d;}
+.bblue{background:var(--blue);color:white;}.bblue:hover:not(:disabled){background:#1a5276;}
+.sm{padding:4px 9px;font-size:11px;}.xs{padding:2px 7px;font-size:10px;}
+
+/* DAY BAR */
+.dbar{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap;}
+.db{padding:6px 15px;border:1px solid var(--line);background:white;border-radius:var(--r);font-family:'IBM Plex Mono';font-size:12px;cursor:pointer;color:var(--muted);transition:all .12s;}
+.db:hover{color:var(--ink);border-color:var(--ink);}
+.db.on{background:var(--ink);color:white;border-color:var(--ink);}
+
+/* SCHEDULE */
+.sw{overflow-x:auto;}
+.sch{width:100%;border-collapse:collapse;min-width:860px;}
+.sch th{background:var(--paper2);padding:9px 13px;text-align:left;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border-bottom:2px solid var(--line);}
+.sch td{padding:11px 13px;border-bottom:1px solid var(--line);vertical-align:top;}
+.sch tr:last-child td{border-bottom:none;}
+.sch tr.rec td{background:var(--paper3);}
+.sch tbody tr:not(.rec):hover td{background:#faf8f4;}
+.sn{font-size:11px;font-weight:600;color:var(--red);}
+.st{font-size:11px;color:var(--muted);margin-top:1px;}
+
+/* GUARDIA CARDS */
+.gcard{background:var(--paper2);border:1px solid var(--line);border-radius:5px;padding:9px 11px;margin-bottom:6px;}
+.gcard:last-child{margin-bottom:0;}
+.ausente-row{display:flex;align-items:center;gap:6px;margin-bottom:3px;}
+.ausente-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.ausente-name{font-size:12px;font-weight:600;}
+.curso-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px;background:#d6eaf8;color:#1a5276;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;}
+.aula-tag{font-size:11px;color:var(--muted);}
+.tarea-txt{font-size:11px;color:var(--ink);margin-top:4px;background:white;border:1px solid var(--line);border-radius:4px;padding:4px 8px;font-style:italic;}
+.chips-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;align-items:center;}
+.chip{display:flex;align-items:center;gap:4px;padding:2px 8px 2px 5px;border-radius:20px;border:1px solid var(--line);background:white;font-size:11px;}
+.chip-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.chip-rm{background:none;border:none;color:#bbb;cursor:pointer;font-size:12px;padding:0 1px;line-height:1;}
+.chip-rm:hover{color:var(--red);}
+.add-chip{width:24px;height:24px;border-radius:50%;border:1px dashed var(--line);background:transparent;font-size:15px;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;flex-shrink:0;}
+.add-chip:hover{border-color:var(--blue);color:var(--blue);}
+.unassigned{font-size:11px;color:var(--muted);font-style:italic;}
+.add-gslot{border:1px dashed var(--line);background:transparent;border-radius:5px;padding:6px 10px;width:100%;font-family:'IBM Plex Mono';font-size:11px;color:var(--muted);cursor:pointer;transition:all .12s;text-align:left;}
+.add-gslot:hover{border-color:var(--red);color:var(--red);}
+
+/* BADGES */
+.badge{display:inline-block;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;}
+.bok{background:#d5f5e3;color:#1e8449;}.bwarn{background:#fdebd0;color:#a04000;}
+.binfo{background:#d6eaf8;color:#1a5276;}.bgrey{background:var(--paper2);color:var(--muted);}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:11px;margin-bottom:18px;}
+.stat{background:white;border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;}
+.stat-n{font-family:'Instrument Serif',serif;font-size:34px;line-height:1;}
+.stat-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-top:2px;}
+
+/* FORM */
+.fg{display:flex;flex-direction:column;gap:4px;}
+.fl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);}
+.fc{padding:7px 10px;background:var(--paper2);border:1px solid var(--line);border-radius:var(--r);color:var(--ink);font-family:'IBM Plex Mono';font-size:13px;outline:none;transition:border-color .12s;width:100%;}
+.fc:focus{border-color:var(--blue);background:white;}
+select.fc option{background:white;}
+textarea.fc{resize:vertical;min-height:60px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px;}
+.full{grid-column:1/-1;}
+
+/* MODAL */
+.ov{display:none;position:fixed;inset:0;background:rgba(26,26,46,.55);backdrop-filter:blur(3px);z-index:500;align-items:center;justify-content:center;padding:16px;}
+.ov.on{display:flex;animation:fu .15s ease;}
+.modal{background:var(--paper);border:1px solid var(--line);border-radius:10px;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+.mhd{padding:18px 20px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;background:var(--paper2);}
+.mhd-t{font-family:'Instrument Serif',serif;font-size:21px;}
+.mx{background:transparent;border:none;font-size:22px;color:var(--muted);cursor:pointer;padding:2px 6px;border-radius:4px;}
+.mx:hover{color:var(--ink);}
+.mb{padding:18px 20px;}
+.mf{padding:12px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px;}
+
+/* TRAMO BUILDER */
+.tc{background:white;border:1px solid var(--line);border-radius:var(--r);padding:13px;margin-bottom:9px;}
+.tc-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
+.tc-l{font-size:11px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:.06em;}
+.atb{border:1px dashed var(--line);background:transparent;border-radius:var(--r);padding:8px;width:100%;font-family:'IBM Plex Mono';font-size:12px;color:var(--muted);cursor:pointer;transition:all .12s;text-align:center;}
+.atb:hover{border-color:var(--blue);color:var(--blue);}
+.rmb{background:transparent;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:2px 4px;border-radius:4px;}
+.rmb:hover{color:var(--red);}
+
+/* DROP ZONE */
+.dz{border:2px dashed var(--line);border-radius:var(--r);padding:28px;text-align:center;cursor:pointer;transition:all .15s;background:var(--paper2);}
+.dz:hover,.dz.drag{border-color:var(--blue);background:#eaf4fb;}
+.dz-icon{font-size:32px;margin-bottom:8px;}
+.dz-txt{font-size:13px;color:var(--muted);line-height:1.6;}
+
+/* PROF LIST */
+.prow{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line);}
+.prow:last-child{border-bottom:none;}
+.pav{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:white;flex-shrink:0;}
+.pname{font-size:13px;font-weight:500;}.pdept{font-size:11px;color:var(--muted);}
+.mla{margin-left:auto;}
+
+/* CSV PREVIEW */
+.pt{width:100%;border-collapse:collapse;font-size:11px;}
+.pt th{background:var(--paper2);padding:6px 9px;text-align:left;border-bottom:1px solid var(--line);color:var(--muted);}
+.pt td{padding:6px 9px;border-bottom:1px solid var(--line);}
+.pt tr:last-child td{border-bottom:none;}
+
+/* LOADING OVERLAY */
+.loading-screen{position:fixed;inset:0;background:var(--paper);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:16px;}
+.loading-screen.hide{display:none;}
+.spinner{width:36px;height:36px;border:3px solid var(--line);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-txt{font-size:13px;color:var(--muted);}
+
+.div{height:1px;background:var(--line);margin:13px 0;}
+.row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 20px;border-radius:20px;font-size:13px;z-index:900;box-shadow:0 4px 20px rgba(0,0,0,.3);display:none;white-space:nowrap;}
+.toast.on{display:block;animation:fu .2s ease;}
+
+@media(max-width:640px){
+  .g2,.g3{grid-template-columns:1fr;}
+  .wrap{padding:14px;}
+  header{padding:0 14px;height:auto;padding:8px 14px;}
+  .nav{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="spinner"></div>
+  <div class="loading-txt">Conectando con la base de datos…</div>
+</div>
+
+<header>
+  <div class="logo"><div class="logo-dot"></div>Guardias&nbsp;<sub>IES</sub></div>
+  <nav class="nav">
+    <button class="nb on"  onclick="goTo('horario',this)">Horario</button>
+    <button class="nb"     onclick="goTo('mis',this)">Mis Guardias</button>
+    <button class="nb"     onclick="goTo('profs',this)">Profesores</button>
+    <button class="nb"     onclick="goTo('csv',this)">Importar CSV</button>
+  </nav>
+  <div style="display:flex;align-items:center;gap:10px">
+    <div class="sync-dot loading" id="syncDot" title="Sincronizando..."></div>
+    <div class="uchip" onclick="openSelUser()">
+      <div class="uav" id="hAv">?</div>
+      <span class="uname" id="hName">Seleccionar</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- HORARIO -->
+  <div class="page on" id="pg-horario">
+    <div class="ph">
+      <div><div class="ph-t">Horario de Guardias</div><div class="ph-s">Pulsa + para apuntarte · Los cambios se sincronizan en tiempo real</div></div>
+      <div class="row">
+        <button class="btn bg sm" onclick="goTo('csv',document.querySelectorAll('.nb')[3])">↑ Importar CSV</button>
+        <button class="btn br" onclick="openAddGuardia()">+ Nueva ausencia</button>
+      </div>
+    </div>
+    <div class="dbar">
+      <button class="db on" onclick="selDay(0,this)">Lunes</button>
+      <button class="db"    onclick="selDay(1,this)">Martes</button>
+      <button class="db"    onclick="selDay(2,this)">Miércoles</button>
+      <button class="db"    onclick="selDay(3,this)">Jueves</button>
+      <button class="db"    onclick="selDay(4,this)">Viernes</button>
+    </div>
+    <div class="card" style="padding:0">
+      <div class="sw"><table class="sch">
+        <thead><tr>
+          <th style="width:105px">Tramo</th>
+          <th style="width:200px">Ausencia / Clase</th>
+          <th>Tarea</th>
+          <th style="width:220px">Cubre la guardia</th>
+          <th style="width:110px">Estado</th>
+        </tr></thead>
+        <tbody id="schBody"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- MIS GUARDIAS -->
+  <div class="page" id="pg-mis">
+    <div class="ph">
+      <div><div class="ph-t">Mis Guardias</div><div class="ph-s" id="myUser">Selecciona tu nombre →</div></div>
+      <button class="btn br" onclick="openAssignSelf(null,null)">+ Apuntarme</button>
+    </div>
+    <div class="stats" id="myStats"></div>
+    <div class="card"><div class="ch"><span class="ch-t">Registro semanal</span></div><div class="cb" id="myList"></div></div>
+  </div>
+
+  <!-- PROFESORES -->
+  <div class="page" id="pg-profs">
+    <div class="ph">
+      <div><div class="ph-t">Profesores</div><div class="ph-s">Claustro y resumen de guardias</div></div>
+      <button class="btn br" onclick="openModal('mAddProf')">+ Añadir</button>
+    </div>
+    <div class="card">
+      <div class="ch"><span class="ch-t">Claustro</span><span class="badge bgrey" id="profCnt">—</span></div>
+      <div class="cb" id="profList"></div>
+    </div>
+  </div>
+
+  <!-- CSV -->
+  <div class="page" id="pg-csv">
+    <div class="ph"><div><div class="ph-t">Importar CSV</div><div class="ph-s">Carga horario de ausencias o la lista de profesores</div></div></div>
+
+    <!-- HORARIO CSV -->
+    <div class="card">
+      <div class="ch"><span class="ch-t">Formato — Horario de guardias</span></div>
+      <div class="cb">
+        <div style="overflow-x:auto"><table class="pt">
+          <thead><tr><th>dia</th><th>tramo</th><th>ausente</th><th>curso</th><th>aula</th><th>tarea</th></tr></thead>
+          <tbody>
+            <tr><td>Lunes</td><td>1</td><td>Ana García</td><td>3ºESO A</td><td>Aula 12</td><td>Ejercicios págs. 45-46</td></tr>
+            <tr><td>Martes</td><td>4</td><td>Luis Martín</td><td>1ºBACH B</td><td>Aula 7</td><td>Leer capítulo 3</td></tr>
+          </tbody>
+        </table></div>
+        <div class="div"></div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.9">
+          <strong style="color:var(--ink)">Tramos:</strong> 1→08:15–09:10 · 2→09:10–10:05 · 3→10:05–10:20 (recreo) · 4→10:20–11:15 · 5→11:15–12:10 · 6→12:10–12:25 (recreo) · 7→12:25–13:20 · 8→13:20–14:15
+        </div>
+        <div class="row">
+          <button class="btn bg sm" onclick="dlHorarioTemplate()">⬇ Plantilla horario</button>
+        </div>
+        <div class="dz" id="dzHorario" style="margin-top:14px" onclick="document.getElementById('fiH').click()"
+          ondragover="event.preventDefault();this.classList.add('drag')"
+          ondragleave="this.classList.remove('drag')"
+          ondrop="handleDropH(event)">
+          <div class="dz-icon">📅</div>
+          <div class="dz-txt"><strong>Arrastra o haz clic para subir el CSV del horario</strong></div>
+        </div>
+        <input type="file" id="fiH" accept=".csv,.txt" style="display:none" onchange="handleFileH(this.files[0])">
+      </div>
+    </div>
+    <div id="csvHBox" style="display:none">
+      <div class="card">
+        <div class="ch"><span class="ch-t">Vista previa — Horario</span><span class="badge binfo" id="csvHCnt">—</span></div>
+        <div class="cb">
+          <div style="overflow-x:auto"><table class="pt" id="prevHTbl"></table></div>
+          <div class="div"></div>
+          <div class="row" style="justify-content:flex-end">
+            <button class="btn bg sm" onclick="document.getElementById('csvHBox').style.display='none'">Cancelar</button>
+            <button class="btn bgreen" id="btnImportH" onclick="importHorario()">✓ Importar horario</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLAUSTRO CSV -->
+    <div class="card" style="border-top:3px solid var(--blue)">
+      <div class="ch"><span class="ch-t" style="color:var(--blue)">Importar Claustro (profesores)</span></div>
+      <div class="cb">
+        <div style="overflow-x:auto"><table class="pt">
+          <thead><tr><th>nombre</th><th>departamento</th></tr></thead>
+          <tbody>
+            <tr><td>Ana García López</td><td>Matemáticas</td></tr>
+            <tr><td>Luis Martín Pérez</td><td>Historia y Geografía</td></tr>
+          </tbody>
+        </table></div>
+        <div class="div"></div>
+        <div class="row" style="margin-bottom:14px">
+          <button class="btn bg sm" onclick="dlClaustroTemplate()">⬇ Plantilla claustro</button>
+        </div>
+        <div class="dz" id="dzProf" onclick="document.getElementById('fiP').click()"
+          ondragover="event.preventDefault();this.classList.add('drag')"
+          ondragleave="this.classList.remove('drag')"
+          ondrop="handleDropP(event)">
+          <div class="dz-icon">👥</div>
+          <div class="dz-txt"><strong>Arrastra o haz clic para subir el CSV del claustro</strong><br>Los profesores ya existentes no se duplican</div>
+        </div>
+        <input type="file" id="fiP" accept=".csv,.txt" style="display:none" onchange="handleFileP(this.files[0])">
+      </div>
+    </div>
+    <div id="csvPBox" style="display:none">
+      <div class="card">
+        <div class="ch"><span class="ch-t">Vista previa — Claustro</span><span class="badge binfo" id="csvPCnt">—</span></div>
+        <div class="cb">
+          <div style="overflow-x:auto"><table class="pt" id="prevPTbl"></table></div>
+          <div class="div"></div>
+          <div class="row" style="justify-content:flex-end">
+            <button class="btn bg sm" onclick="document.getElementById('csvPBox').style.display='none'">Cancelar</button>
+            <button class="btn bblue" id="btnImportP" onclick="importClaustro()">✓ Importar profesores</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<!-- MODAL: NUEVA AUSENCIA -->
+<div class="ov" id="mGuardia">
+  <div class="modal">
+    <div class="mhd"><div class="mhd-t">Nueva ausencia</div><button class="mx" onclick="cm('mGuardia')">×</button></div>
+    <div class="mb">
+      <div class="g2">
+        <div class="fg"><label class="fl">Día</label>
+          <select class="fc" id="gDia"><option>Lunes</option><option>Martes</option><option>Miércoles</option><option>Jueves</option><option>Viernes</option></select>
+        </div>
+        <div class="fg"><label class="fl">Tramo</label><select class="fc" id="gSlot"></select></div>
+      </div>
+      <div class="g2">
+        <div class="fg"><label class="fl">Profesor ausente</label><select class="fc" id="gAusente"></select></div>
+        <div class="fg"><label class="fl">Curso</label><input class="fc" id="gCurso" placeholder="ej: 3ºESO A"></div>
+      </div>
+      <div class="g2">
+        <div class="fg"><label class="fl">Aula</label><input class="fc" id="gAula" placeholder="ej: Aula 12"></div>
+        <div class="fg"><label class="fl">Motivo</label><input class="fc" id="gMotivo" placeholder="Baja, reunión..."></div>
+      </div>
+      <div class="fg"><label class="fl">Tarea para los alumnos</label>
+        <textarea class="fc" id="gTarea" placeholder="ej: Ejercicios págs. 45-46..."></textarea>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn bg" onclick="cm('mGuardia')">Cancelar</button>
+      <button class="btn br" id="btnSaveG" onclick="saveGuardia()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: APUNTARME -->
+<div class="ov" id="mApuntar">
+  <div class="modal">
+    <div class="mhd"><div class="mhd-t">Apuntarme a guardia</div><button class="mx" onclick="cm('mApuntar')">×</button></div>
+    <div class="mb">
+      <div class="g2" style="margin-bottom:11px">
+        <div class="fg"><label class="fl">Soy</label><select class="fc" id="aProfId"></select></div>
+        <div class="fg"><label class="fl">Día</label>
+          <select class="fc" id="aDia" onchange="updateGuardiaSelect()">
+            <option>Lunes</option><option>Martes</option><option>Miércoles</option><option>Jueves</option><option>Viernes</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg" style="margin-bottom:14px"><label class="fl">Guardia a cubrir</label>
+        <select class="fc" id="aGuardia"><option value="">— Selecciona una guardia —</option></select>
+      </div>
+      <div class="div" style="margin:4px 0 13px"></div>
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:9px">
+        Tramos que cubro <span style="color:var(--red)">(hasta 3)</span>
+      </div>
+      <div id="aTramos"></div>
+      <button class="atb" id="aTramosBtn" onclick="addATramo()">+ Añadir tramo</button>
+    </div>
+    <div class="mf">
+      <button class="btn bg" onclick="cm('mApuntar')">Cancelar</button>
+      <button class="btn br" id="btnSaveA" onclick="saveApuntar()">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ADD PROF -->
+<div class="ov" id="mAddProf">
+  <div class="modal" style="max-width:420px">
+    <div class="mhd"><div class="mhd-t">Añadir Profesor/a</div><button class="mx" onclick="cm('mAddProf')">×</button></div>
+    <div class="mb">
+      <div class="g2">
+        <div class="fg full"><label class="fl">Nombre completo</label><input class="fc" id="pNom" placeholder="Ana García López"></div>
+        <div class="fg"><label class="fl">Departamento</label><input class="fc" id="pDep" placeholder="Matemáticas"></div>
+        <div class="fg"><label class="fl">Color</label><input type="color" class="fc" id="pCol" value="#2471a3" style="height:38px;cursor:pointer;padding:3px"></div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn bg" onclick="cm('mAddProf')">Cancelar</button><button class="btn br" id="btnSaveP" onclick="saveProf()">Añadir</button></div>
+  </div>
+</div>
+
+<!-- MODAL: SELECT USER -->
+<div class="ov" id="mUser">
+  <div class="modal" style="max-width:340px">
+    <div class="mhd"><div class="mhd-t">¿Quién eres?</div><button class="mx" onclick="cm('mUser')">×</button></div>
+    <div class="mb">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:13px">Selecciona tu nombre. Queda guardado en este dispositivo.</p>
+      <div id="userPick"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// SUPABASE
+// ═══════════════════════════════════════════════
+const SUPA_URL = 'https://lcqncxfaktgguqrvigxo.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjcW5jeGZha3RnZ3VxcnZpZ3hvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxNzQxMzAsImV4cCI6MjA4ODc1MDEzMH0.jem1x4AjEJPtLpyOrcqbxIk77IlDwxt_EItWIcmZw0w';
+const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+// ═══════════════════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════════════════
+const SLOTS = [
+  {n:1, hora:'08:15–09:10', label:'1ª hora',    recreo:false},
+  {n:2, hora:'09:10–10:05', label:'2ª hora',    recreo:false},
+  {n:3, hora:'10:05–10:20', label:'1er Recreo', recreo:true},
+  {n:4, hora:'10:20–11:15', label:'3ª hora',    recreo:false},
+  {n:5, hora:'11:15–12:10', label:'4ª hora',    recreo:false},
+  {n:6, hora:'12:10–12:25', label:'2º Recreo',  recreo:true},
+  {n:7, hora:'12:25–13:20', label:'5ª hora',    recreo:false},
+  {n:8, hora:'13:20–14:15', label:'6ª hora',    recreo:false},
+];
+const DIAS = ['Lunes','Martes','Miércoles','Jueves','Viernes'];
+const PALETTE = ['#c0392b','#2471a3','#1e8449','#7d3c98','#ca6f1e','#117a65','#943126','#1a5276','#784212','#1a6b3c'];
+
+// ═══════════════════════════════════════════════
+// LOCAL STATE (cache from Supabase)
+// ═══════════════════════════════════════════════
+let profs = [];
+let guardias = [];
+let coberturas = [];
+let currentDay = 0;
+let activeUser = null;
+
+// Restore active user from localStorage
+const savedUserId = parseInt(localStorage.getItem('guardias_user_id'));
+
+// ═══════════════════════════════════════════════
+// SYNC INDICATOR
+// ═══════════════════════════════════════════════
+function syncOk()  { const d=document.getElementById('syncDot'); d.className='sync-dot ok'; d.title='Conectado'; }
+function syncErr() { const d=document.getElementById('syncDot'); d.className='sync-dot err'; d.title='Error de conexión'; }
+function syncLoad(){ const d=document.getElementById('syncDot'); d.className='sync-dot loading'; d.title='Sincronizando...'; }
+
+// ═══════════════════════════════════════════════
+// LOAD ALL DATA
+// ═══════════════════════════════════════════════
+async function loadAll() {
+  syncLoad();
+  try {
+    const [rP, rG, rC] = await Promise.all([
+      sb.from('profesores').select('*').order('nombre'),
+      sb.from('guardias').select('*').order('id'),
+      sb.from('coberturas').select('*').order('id'),
+    ]);
+    if(rP.error||rG.error||rC.error) throw rP.error||rG.error||rC.error;
+    profs      = rP.data || [];
+    guardias   = rG.data || [];
+    coberturas = rC.data || [];
+
+    // Restore active user
+    if(savedUserId && !activeUser) {
+      const u = profs.find(p=>p.id===savedUserId);
+      if(u) setUserLocal(u);
+    }
+
+    syncOk();
+    document.getElementById('loadingScreen').classList.add('hide');
+    renderCurrent();
+  } catch(e) {
+    syncErr();
+    document.getElementById('loadingScreen').classList.add('hide');
+    showToast('Error de conexión: '+e.message);
+  }
+}
+
+// ═══════════════════════════════════════════════
+// REAL-TIME SUBSCRIPTIONS
+// ═══════════════════════════════════════════════
+function setupRealtime() {
+  sb.channel('changes')
+    .on('postgres_changes', {event:'*', schema:'public', table:'profesores'}, async () => {
+      const {data} = await sb.from('profesores').select('*').order('nombre');
+      profs = data||[];
+      renderCurrent();
+    })
+    .on('postgres_changes', {event:'*', schema:'public', table:'guardias'}, async () => {
+      const {data} = await sb.from('guardias').select('*').order('id');
+      guardias = data||[];
+      renderCurrent();
+    })
+    .on('postgres_changes', {event:'*', schema:'public', table:'coberturas'}, async () => {
+      const {data} = await sb.from('coberturas').select('*').order('id');
+      coberturas = data||[];
+      renderCurrent();
+    })
+    .subscribe();
+}
+
+function renderCurrent() {
+  const pages = ['horario','mis','profs'];
+  const active = document.querySelector('.page.on');
+  if(!active) return;
+  const id = active.id.replace('pg-','');
+  if(id==='horario') renderSch();
+  if(id==='mis')     renderMis();
+  if(id==='profs')   renderProfs();
+}
+
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+function goTo(id, btn) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('pg-'+id).classList.add('on');
+  if(btn) btn.classList.add('on');
+  if(id==='horario') renderSch();
+  if(id==='mis')     renderMis();
+  if(id==='profs')   renderProfs();
+}
+function selDay(i,btn){
+  currentDay=i;
+  document.querySelectorAll('.db').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderSch();
+}
+
+// ═══════════════════════════════════════════════
+// SCHEDULE RENDER
+// ═══════════════════════════════════════════════
+function renderSch() {
+  const dia = DIAS[currentDay];
+  const tbody = document.getElementById('schBody');
+  tbody.innerHTML = '';
+  SLOTS.forEach(sl => {
+    const tr = document.createElement('tr');
+    if(sl.recreo) tr.classList.add('rec');
+    const gs = guardias.filter(g=>g.dia===dia && g.slot_n===sl.n);
+    let gCell='', tCell='', pCell='', eCell='';
+
+    if(sl.recreo) {
+      gCell='<span class="badge bgrey">Recreo</span>';
+      eCell='<span class="badge bgrey">Recreo</span>';
+    } else if(!gs.length) {
+      gCell=`<button class="add-gslot" onclick="openAddGuardiaFor('${dia}',${sl.n})">+ Añadir ausencia</button>`;
+      eCell='<span class="badge bgrey">Libre</span>';
+    } else {
+      gs.forEach(g => {
+        const ausente = profs.find(p=>p.id===g.ausente_id);
+        const cobs = coberturas.filter(c=>c.guardia_id===g.id);
+        gCell += `<div class="gcard" style="border-left:3px solid ${ausente?.color||'#ccc'}">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
+            <div>
+              <div class="ausente-row">
+                <div class="ausente-dot" style="background:${ausente?.color||'#aaa'}"></div>
+                <span class="ausente-name">${ausente?.nombre||'?'}</span>
+                <span style="font-size:10px;color:var(--muted)">(ausente)</span>
+              </div>
+              <div class="row" style="gap:5px;margin-top:3px">
+                <span class="curso-badge">${g.curso||'—'}</span>
+                <span class="aula-tag">📍 ${g.aula||'—'}</span>
+              </div>
+            </div>
+            <button class="btn bg xs" onclick="delGuardia(${g.id})">×</button>
+          </div>
+        </div>`;
+        tCell += g.tarea
+          ? `<div class="tarea-txt" style="margin-bottom:5px">📝 ${g.tarea}</div>`
+          : `<span style="font-size:11px;color:var(--muted);font-style:italic">Sin tarea</span>`;
+        let chips='<div class="chips-row">';
+        if(cobs.length) {
+          cobs.forEach(c=>{
+            const p=profs.find(x=>x.id===c.profesor_id);
+            const ts=(c.tramos||[]).map(t=>t.tipo).join(', ');
+            chips+=`<div class="chip"><div class="chip-dot" style="background:${p?.color||'#aaa'}"></div>
+              <span>${shortName(p?.nombre||'?')}</span>
+              ${ts?`<span style="font-size:10px;color:var(--muted)">${ts}</span>`:''}
+              <button class="chip-rm" onclick="delCobertura(${c.id})">×</button>
+            </div>`;
+          });
+        } else {
+          chips+='<span class="unassigned">Nadie aún</span>';
+        }
+        chips+=`<button class="add-chip" onclick="openAssignSelf('${dia}',${g.id})" title="Apuntarme">+</button></div>`;
+        pCell+=chips;
+        eCell+=cobs.length
+          ? `<span class="badge bok">✓ Cubierta</span><br>`
+          : `<span class="badge bwarn">⚠ Sin cubrir</span><br>`;
+      });
+    }
+    tr.innerHTML=`
+      <td><div class="sn">Tramo ${sl.n}</div><div class="st">${sl.hora}</div><div style="font-size:10px;color:var(--muted)">${sl.label}</div></td>
+      <td>${gCell}</td><td>${tCell}</td><td>${pCell}</td><td>${eCell}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// GUARDIA CRUD
+// ═══════════════════════════════════════════════
+function openAddGuardia() { populateSlotSelect(); populateAusenteSelect(); openModal('mGuardia'); }
+function openAddGuardiaFor(dia,slotN) {
+  populateSlotSelect(); populateAusenteSelect();
+  document.getElementById('gDia').value=dia;
+  document.getElementById('gSlot').value=slotN;
+  openModal('mGuardia');
+}
+function populateSlotSelect(){
+  document.getElementById('gSlot').innerHTML=SLOTS.filter(s=>!s.recreo).map(s=>`<option value="${s.n}">Tramo ${s.n} — ${s.hora}</option>`).join('');
+}
+function populateAusenteSelect(){
+  document.getElementById('gAusente').innerHTML=profs.map(p=>`<option value="${p.id}">${p.nombre}</option>`).join('');
+}
+
+async function saveGuardia() {
+  const btn=document.getElementById('btnSaveG');
+  btn.disabled=true; btn.textContent='Guardando…';
+  const payload = {
+    dia: document.getElementById('gDia').value,
+    slot_n: parseInt(document.getElementById('gSlot').value),
+    ausente_id: parseInt(document.getElementById('gAusente').value),
+    curso: document.getElementById('gCurso').value.trim()||'—',
+    aula: document.getElementById('gAula').value.trim()||'—',
+    motivo: document.getElementById('gMotivo').value.trim(),
+    tarea: document.getElementById('gTarea').value.trim(),
+  };
+  const {error} = await sb.from('guardias').insert(payload);
+  btn.disabled=false; btn.textContent='Guardar';
+  if(error){ showToast('Error: '+error.message); return; }
+  ['gCurso','gAula','gMotivo','gTarea'].forEach(id=>document.getElementById(id).value='');
+  cm('mGuardia');
+  showToast('Ausencia registrada ✓');
+}
+
+async function delGuardia(id) {
+  syncLoad();
+  const {error} = await sb.from('guardias').delete().eq('id',id);
+  if(error){ syncErr(); showToast('Error: '+error.message); return; }
+  showToast('Guardia eliminada');
+}
+
+async function delCobertura(id) {
+  syncLoad();
+  const {error} = await sb.from('coberturas').delete().eq('id',id);
+  if(error){ syncErr(); showToast('Error: '+error.message); return; }
+  showToast('Eliminado de la guardia');
+}
+
+// ═══════════════════════════════════════════════
+// APUNTARME
+// ═══════════════════════════════════════════════
+let nAt=0;
+
+function openAssignSelf(dia, guardiaId) {
+  const sel=document.getElementById('aProfId');
+  sel.innerHTML=profs.map(p=>`<option value="${p.id}">${p.nombre}</option>`).join('');
+  if(activeUser) sel.value=activeUser.id;
+  if(dia) document.getElementById('aDia').value=dia;
+  updateGuardiaSelect(guardiaId);
+  nAt=0; document.getElementById('aTramos').innerHTML='';
+  addATramo();
+  openModal('mApuntar');
+}
+
+function updateGuardiaSelect(preselect) {
+  const dia=document.getElementById('aDia').value;
+  const gs=guardias.filter(g=>g.dia===dia);
+  const sel=document.getElementById('aGuardia');
+  sel.innerHTML = gs.length
+    ? gs.map(g=>{
+        const a=profs.find(p=>p.id===g.ausente_id);
+        return `<option value="${g.id}">${SLOTS.find(s=>s.n===g.slot_n)?.hora||''} — ${a?.nombre||'?'} · ${g.curso} · ${g.aula}</option>`;
+      }).join('')
+    : '<option value="">— No hay ausencias este día —</option>';
+  if(preselect) sel.value=preselect;
+}
+
+function addATramo(preSlot) {
+  if(nAt>=3) return; nAt++;
+  const n=nAt;
+  const slotOpts=SLOTS.filter(s=>!s.recreo).map(s=>`<option value="${s.n}"${preSlot==s.n?' selected':''}>${s.n}. ${s.hora}</option>`).join('');
+  const def=SLOTS.find(s=>s.n===(preSlot||1));
+  const [di,df]=(def?.hora||'08:15–09:10').split('–');
+  const div=document.createElement('div');
+  div.className='tc'; div.id='at'+n;
+  div.innerHTML=`
+    <div class="tc-hd"><span class="tc-l">Tramo ${n}</span>${n>1?`<button class="rmb" onclick="rmAt(${n})">×</button>`:''}</div>
+    <div class="g3" style="margin-bottom:9px">
+      <div class="fg"><label class="fl">Período</label><select class="fc" id="at${n}s" onchange="autoH(${n})">${slotOpts}</select></div>
+      <div class="fg"><label class="fl">Hora inicio</label><input class="fc" type="time" id="at${n}i" value="${di}"></div>
+      <div class="fg"><label class="fl">Hora fin</label><input class="fc" type="time" id="at${n}f" value="${df}"></div>
+    </div>
+    <div class="fg"><label class="fl">Tipo</label>
+      <select class="fc" id="at${n}t"><option>Aula</option><option>Patio</option><option>Pasillo</option><option>Biblioteca</option><option>Despacho</option><option>Otro</option></select>
+    </div>`;
+  document.getElementById('aTramos').appendChild(div);
+  document.getElementById('aTramosBtn').style.display=nAt>=3?'none':'block';
+}
+function rmAt(n){ document.getElementById('at'+n)?.remove(); nAt--; document.getElementById('aTramosBtn').style.display='block'; }
+function autoH(n){
+  const sl=SLOTS.find(s=>s.n===parseInt(document.getElementById('at'+n+'s').value));
+  if(!sl) return;
+  const [i,f]=sl.hora.split('–');
+  document.getElementById('at'+n+'i').value=i;
+  document.getElementById('at'+n+'f').value=f;
+}
+
+async function saveApuntar() {
+  const profId=parseInt(document.getElementById('aProfId').value);
+  const gid=parseInt(document.getElementById('aGuardia').value);
+  if(!gid){ showToast('Selecciona una guardia'); return; }
+  const tramos=[];
+  for(let i=1;i<=nAt+3;i++){
+    if(!document.getElementById('at'+i)) continue;
+    tramos.push({
+      slot:parseInt(document.getElementById('at'+i+'s')?.value),
+      ini:document.getElementById('at'+i+'i')?.value,
+      fin:document.getElementById('at'+i+'f')?.value,
+      tipo:document.getElementById('at'+i+'t')?.value,
+    });
+  }
+  if(!tramos.length){ showToast('Añade al menos un tramo'); return; }
+  const btn=document.getElementById('btnSaveA');
+  btn.disabled=true; btn.textContent='Guardando…';
+  syncLoad();
+
+  // Upsert cobertura
+  const {error} = await sb.from('coberturas').upsert(
+    {guardia_id:gid, profesor_id:profId, tramos},
+    {onConflict:'guardia_id,profesor_id'}
+  );
+  btn.disabled=false; btn.textContent='Confirmar';
+  if(error){ syncErr(); showToast('Error: '+error.message); return; }
+  cm('mApuntar');
+  const p=profs.find(x=>x.id===profId);
+  showToast(`${p?.nombre} apuntado/a ✓`);
+}
+
+// ═══════════════════════════════════════════════
+// MIS GUARDIAS
+// ═══════════════════════════════════════════════
+function renderMis() {
+  const u=activeUser;
+  document.getElementById('myUser').textContent=u?u.nombre:'Selecciona tu nombre →';
+  const myCobs=coberturas.filter(c=>c.profesor_id===u?.id);
+  const myGs=guardias.filter(g=>myCobs.some(c=>c.guardia_id===g.id));
+  myGs.sort((a,b)=>DIAS.indexOf(a.dia)-DIAS.indexOf(b.dia)||a.slot_n-b.slot_n);
+  const dias=new Set(myGs.map(g=>g.dia)).size;
+  const totalT=myCobs.reduce((a,c)=>a+(c.tramos?.length||0),0);
+  document.getElementById('myStats').innerHTML=`
+    <div class="stat"><div class="stat-n" style="color:var(--red)">${myGs.length}</div><div class="stat-l">Guardias semana</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--blue)">${totalT}</div><div class="stat-l">Tramos cubiertos</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--green)">${dias}</div><div class="stat-l">Días con guardia</div></div>
+  `;
+  const list=document.getElementById('myList');
+  if(!u){list.innerHTML='<p style="color:var(--muted);font-size:13px">Selecciona tu usuario en la cabecera.</p>';return;}
+  if(!myGs.length){list.innerHTML='<p style="color:var(--muted);font-size:13px">Sin guardias asignadas esta semana.</p>';return;}
+  list.innerHTML=myGs.map(g=>{
+    const ausente=profs.find(p=>p.id===g.ausente_id);
+    const sl=SLOTS.find(s=>s.n===g.slot_n);
+    const cob=myCobs.find(c=>c.guardia_id===g.id);
+    return `<div style="padding:13px 0;border-bottom:1px solid var(--line)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px">
+        <div>
+          <div style="font-weight:600;font-size:13px">${g.dia} · ${sl?.label} <span style="color:var(--muted);font-weight:400">${sl?.hora}</span></div>
+          <div class="row" style="margin-top:4px;gap:6px">
+            <span class="curso-badge">${g.curso}</span>
+            <span style="font-size:11px;color:var(--muted)">📍 ${g.aula}</span>
+            <span style="font-size:11px;color:var(--muted)">Sustituye a <strong style="color:var(--ink)">${ausente?.nombre||'?'}</strong></span>
+          </div>
+        </div>
+        <button class="btn bg xs" onclick="delCobertura(${cob?.id})">Quitar</button>
+      </div>
+      ${g.tarea?`<div class="tarea-txt" style="margin-bottom:7px">📝 ${g.tarea}</div>`:''}
+      <div class="row" style="gap:5px">
+        ${(cob?.tramos||[]).map(t=>`<div style="background:var(--paper2);border:1px solid var(--line);border-radius:4px;padding:3px 9px;font-size:11px">${t.ini}–${t.fin} <span class="badge binfo">${t.tipo}</span></div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════
+// PROFESORES CRUD
+// ═══════════════════════════════════════════════
+function renderProfs() {
+  document.getElementById('profCnt').textContent=profs.length+' profesores';
+  const list=document.getElementById('profList');
+  if(!profs.length){list.innerHTML='<p style="color:var(--muted)">Sin profesores registrados.</p>';return;}
+  list.innerHTML=profs.map(p=>{
+    const cubre=coberturas.filter(c=>c.profesor_id===p.id).length;
+    const ausente=guardias.filter(g=>g.ausente_id===p.id).length;
+    return `<div class="prow">
+      <div class="pav" style="background:${p.color}">${ini(p.nombre)}</div>
+      <div><div class="pname">${p.nombre}</div><div class="pdept">${p.departamento||'—'}</div></div>
+      <div class="mla" style="display:flex;align-items:center;gap:14px">
+        <div style="text-align:right"><div style="font-family:'Instrument Serif',serif;font-size:22px;color:var(--red)">${cubre}</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase">cubre</div></div>
+        <div style="text-align:right"><div style="font-family:'Instrument Serif',serif;font-size:22px;color:var(--muted)">${ausente}</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase">ausencias</div></div>
+        <button class="btn bg xs" onclick="delProf(${p.id})">×</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function saveProf() {
+  const nombre=document.getElementById('pNom').value.trim();
+  if(!nombre) return;
+  const btn=document.getElementById('btnSaveP');
+  btn.disabled=true; btn.textContent='Guardando…';
+  const {error} = await sb.from('profesores').insert({
+    nombre, departamento: document.getElementById('pDep').value||'—',
+    color: document.getElementById('pCol').value
+  });
+  btn.disabled=false; btn.textContent='Añadir';
+  if(error){ showToast('Error: '+error.message); return; }
+  document.getElementById('pNom').value=''; document.getElementById('pDep').value='';
+  cm('mAddProf'); showToast('Profesor/a añadido/a ✓');
+}
+
+async function delProf(id) {
+  const {error} = await sb.from('profesores').delete().eq('id',id);
+  if(error){ showToast('Error: '+error.message); return; }
+  showToast('Profesor eliminado');
+}
+
+// ═══════════════════════════════════════════════
+// USER PICKER
+// ═══════════════════════════════════════════════
+function openSelUser(){
+  document.getElementById('userPick').innerHTML=profs.map(p=>`
+    <div class="prow" style="cursor:pointer" onclick="setUser(${p.id})">
+      <div class="pav" style="background:${p.color}">${ini(p.nombre)}</div>
+      <div><div class="pname">${p.nombre}</div><div class="pdept">${p.departamento||'—'}</div></div>
+      ${activeUser?.id===p.id?'<div class="mla"><span class="badge bok">Activo</span></div>':''}
+    </div>`).join('');
+  openModal('mUser');
+}
+function setUser(id){
+  const u=profs.find(p=>p.id===id); if(!u) return;
+  setUserLocal(u);
+  cm('mUser'); renderMis();
+  showToast(`Hola, ${u.nombre.split(' ')[0]}!`);
+}
+function setUserLocal(u){
+  activeUser=u;
+  localStorage.setItem('guardias_user_id', u.id);
+  document.getElementById('hAv').textContent=ini(u.nombre);
+  document.getElementById('hAv').style.background=u.color;
+  document.getElementById('hName').textContent=u.nombre.split(' ')[0];
+}
+
+// ═══════════════════════════════════════════════
+// CSV — HORARIO
+// ═══════════════════════════════════════════════
+let csvHRows=[];
+function dlHorarioTemplate(){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['dia,tramo,ausente,curso,aula,tarea\nLunes,1,Ana García,3ºESO A,Aula 12,Ejercicios págs. 45-46\nMartes,4,Luis Martín,1ºBACH B,Aula 7,Leer capítulo 3\n'],{type:'text/csv'}));
+  a.download='plantilla_horario.csv'; a.click();
+}
+function handleDropH(e){e.preventDefault();document.getElementById('dzHorario').classList.remove('drag');if(e.dataTransfer.files[0])handleFileH(e.dataTransfer.files[0]);}
+function handleFileH(f){if(!f)return;const r=new FileReader();r.onload=ev=>parseCSVH(ev.target.result);r.readAsText(f,'UTF-8');}
+function parseCSVH(text){
+  const lines=text.trim().split(/\r?\n/).filter(l=>l.trim());
+  if(lines.length<2){showToast('CSV vacío');return;}
+  const hdr=lines[0].split(',').map(h=>h.trim().toLowerCase());
+  csvHRows=lines.slice(1).map(l=>{const v=l.split(',').map(x=>x.trim());const r={};hdr.forEach((h,j)=>r[h]=v[j]||'');return r;});
+  const tbl=document.getElementById('prevHTbl');
+  tbl.innerHTML=`<thead><tr>${hdr.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>
+    ${csvHRows.slice(0,10).map(r=>`<tr>${hdr.map(h=>`<td>${r[h]||''}</td>`).join('')}</tr>`).join('')}
+    ${csvHRows.length>10?`<tr><td colspan="${hdr.length}" style="color:var(--muted);text-align:center">…y ${csvHRows.length-10} más</td></tr>`:''}
+  </tbody>`;
+  document.getElementById('csvHCnt').textContent=csvHRows.length+' filas';
+  document.getElementById('csvHBox').style.display='block';
+}
+
+async function importHorario(){
+  const btn=document.getElementById('btnImportH');
+  btn.disabled=true; btn.textContent='Importando…'; syncLoad();
+  let imp=0, skip=0;
+  for(const row of csvHRows){
+    const dia=(row.dia||'').trim();
+    const sn=parseInt(row.tramo);
+    const ausNom=(row.ausente||'').trim();
+    if(!dia||!sn||!ausNom||!DIAS.includes(dia)){skip++;continue;}
+    const sl=SLOTS.find(s=>s.n===sn);
+    if(!sl||sl.recreo){skip++;continue;}
+    let ausente=profs.find(p=>p.nombre.toLowerCase()===ausNom.toLowerCase());
+    if(!ausente){
+      const {data,error}=await sb.from('profesores').insert({nombre:ausNom,departamento:'Por asignar',color:PALETTE[profs.length%PALETTE.length]}).select().single();
+      if(error){skip++;continue;}
+      profs.push(data); ausente=data;
+    }
+    const {error}=await sb.from('guardias').insert({
+      dia, slot_n:sn, ausente_id:ausente.id,
+      curso:(row.curso||'—').trim(), aula:(row.aula||'—').trim(),
+      motivo:'', tarea:(row.tarea||'').trim()
+    });
+    if(!error) imp++; else skip++;
+  }
+  btn.disabled=false; btn.textContent='✓ Importar horario';
+  document.getElementById('csvHBox').style.display='none';
+  showToast(`✓ ${imp} guardias importadas${skip?` · ${skip} omitidas`:''}`);
+  goTo('horario',document.querySelector('.nb'));
+}
+
+// ═══════════════════════════════════════════════
+// CSV — CLAUSTRO
+// ═══════════════════════════════════════════════
+let csvPRows=[];
+function dlClaustroTemplate(){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['nombre,departamento\nAna García López,Matemáticas\nLuis Martín Pérez,Historia y Geografía\n'],{type:'text/csv'}));
+  a.download='plantilla_claustro.csv'; a.click();
+}
+function handleDropP(e){e.preventDefault();document.getElementById('dzProf').classList.remove('drag');if(e.dataTransfer.files[0])handleFileP(e.dataTransfer.files[0]);}
+function handleFileP(f){if(!f)return;const r=new FileReader();r.onload=ev=>parseCSVP(ev.target.result);r.readAsText(f,'UTF-8');}
+function parseCSVP(text){
+  const lines=text.trim().split(/\r?\n/).filter(l=>l.trim());
+  if(lines.length<2){showToast('CSV vacío');return;}
+  const hdr=lines[0].split(',').map(h=>h.trim().toLowerCase());
+  csvPRows=lines.slice(1).map(l=>{const v=l.split(',').map(x=>x.trim());const r={};hdr.forEach((h,j)=>r[h]=v[j]||'');return r;}).filter(r=>r.nombre);
+  const tbl=document.getElementById('prevPTbl');
+  tbl.innerHTML=`<thead><tr>${hdr.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>
+    ${csvPRows.slice(0,12).map(r=>`<tr>${hdr.map(h=>`<td>${r[h]||''}</td>`).join('')}</tr>`).join('')}
+    ${csvPRows.length>12?`<tr><td colspan="${hdr.length}" style="color:var(--muted);text-align:center">…y ${csvPRows.length-12} más</td></tr>`:''}
+  </tbody>`;
+  document.getElementById('csvPCnt').textContent=csvPRows.length+' profesores';
+  document.getElementById('csvPBox').style.display='block';
+}
+
+async function importClaustro(){
+  const btn=document.getElementById('btnImportP');
+  btn.disabled=true; btn.textContent='Importando…'; syncLoad();
+  let added=0, skipped=0;
+  for(const row of csvPRows){
+    const nombre=(row.nombre||'').trim();
+    if(!nombre){skipped++;continue;}
+    if(profs.find(p=>p.nombre.toLowerCase()===nombre.toLowerCase())){skipped++;continue;}
+    const {data,error}=await sb.from('profesores').insert({
+      nombre, departamento:(row.departamento||row.dept||'—').trim(),
+      color:PALETTE[profs.length%PALETTE.length]
+    }).select().single();
+    if(!error){profs.push(data);added++;}else{skipped++;}
+  }
+  btn.disabled=false; btn.textContent='✓ Importar profesores';
+  document.getElementById('csvPBox').style.display='none';
+  showToast(`✓ ${added} añadidos${skipped?` · ${skipped} ya existían`:''}`);
+  if(added>0) goTo('profs',document.querySelectorAll('.nb')[2]);
+}
+
+// ═══════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════
+function ini(n){return(n||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();}
+function shortName(n){const p=(n||'').split(' ');return p[0]+(p[1]?' '+p[1][0]+'.':'');}
+function openModal(id){document.getElementById(id).classList.add('on');}
+function cm(id){document.getElementById(id).classList.remove('on');}
+document.querySelectorAll('.ov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('on');}));
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),3200);}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+loadAll();
+setupRealtime();
+</script>
+</body>
+</html>
