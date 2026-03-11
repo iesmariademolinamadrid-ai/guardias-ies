@@ -7,199 +7,205 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{
-  --ink:#2d4166; --paper:#f7f9fc; --paper2:#edf1f7; --paper3:#dde4ef;
-  --line:#c5cedf; --gold:#f5a623; --green:#1e8449; --blue:#2471a3;
-  --muted:#7a8ba8; --r:6px;
-}
+:root{--ink:#2d4166;--paper:#f7f9fc;--paper2:#edf1f7;--paper3:#dde4ef;--line:#c5cedf;--gold:#f5a623;--green:#1e8449;--blue:#2471a3;--red:#c0392b;--muted:#7a8ba8;--r:6px;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'IBM Plex Mono',monospace;background:var(--paper);color:var(--ink);min-height:100vh;font-size:15px;}
-
-/* HEADER */
 header{background:var(--ink);color:var(--paper);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:62px;border-bottom:4px solid var(--gold);gap:12px;flex-wrap:wrap;}
-.logo{font-family:'Instrument Serif',serif;font-size:22px;display:flex;align-items:center;gap:10px;white-space:nowrap;}
+.logo{font-family:'Instrument Serif',serif;font-size:21px;display:flex;align-items:center;gap:10px;white-space:nowrap;}
 .nav{display:flex;gap:2px;flex-wrap:wrap;}
-.nb{padding:7px 15px;border:none;background:transparent;color:#aaa;font-family:'IBM Plex Mono';font-size:12px;cursor:pointer;border-radius:4px;transition:all .12s;text-transform:uppercase;letter-spacing:.05em;}
-.nb:hover{color:var(--paper);background:rgba(255,255,255,.08);}
-.nb.on{color:var(--ink);background:var(--gold);}
-.uchip{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:4px 11px 4px 6px;cursor:pointer;transition:background .12s;white-space:nowrap;}
+.nb{padding:7px 14px;border:none;background:transparent;color:#aaa;font-family:'IBM Plex Mono';font-size:12px;cursor:pointer;border-radius:4px;transition:all .12s;text-transform:uppercase;letter-spacing:.05em;}
+.nb:hover{color:var(--paper);background:rgba(255,255,255,.08);}.nb.on{color:var(--ink);background:var(--gold);}
+.uchip{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:4px 11px 4px 6px;cursor:pointer;}
 .uchip:hover{background:rgba(255,255,255,.14);}
 .uav{width:28px;height:28px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--ink);flex-shrink:0;}
 .uname{font-size:11px;color:var(--paper);}
-.sync-dot{width:7px;height:7px;border-radius:50%;background:#555;flex-shrink:0;transition:background .3s;}
-.sync-dot.ok{background:#27ae60;}.sync-dot.err{background:#c0392b;}
-.sync-dot.loading{background:var(--gold);animation:pulse 1s infinite;}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:#555;flex-shrink:0;}
+.sync-dot.ok{background:#27ae60;}.sync-dot.err{background:var(--red);}.sync-dot.loading{background:var(--gold);animation:pulse 1s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-
-/* LAYOUT */
 .wrap{max-width:1400px;margin:0 auto;padding:28px 32px;}
 .page{display:none;}.page.on{display:block;animation:fu .18s ease;}
 @keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 .ph{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:22px;gap:12px;flex-wrap:wrap;}
 .ph-t{font-family:'Instrument Serif',serif;font-size:34px;line-height:1;}
 .ph-s{font-size:12px;color:var(--muted);margin-top:4px;}
-
-/* WEEK NAV */
 .wnav{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
-.wnav-lbl{font-family:'Instrument Serif',serif;font-size:20px;min-width:220px;text-align:center;}
+.wnav-lbl{font-family:'Instrument Serif',serif;font-size:19px;min-width:220px;text-align:center;}
 .wbtn{padding:6px 14px;border:1px solid var(--line);background:white;border-radius:var(--r);font-family:'IBM Plex Mono';font-size:12px;cursor:pointer;color:var(--muted);transition:all .12s;}
-.wbtn:hover{color:var(--ink);border-color:var(--ink);}
-.wbtn.today{background:var(--ink);color:white;border-color:var(--ink);}
+.wbtn:hover{color:var(--ink);border-color:var(--ink);}.wbtn.today{background:var(--ink);color:white;border-color:var(--ink);}
 .dbar{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:16px;}
 .db{padding:8px 16px;border:1px solid var(--line);background:white;border-radius:var(--r);font-family:'IBM Plex Mono';font-size:12px;cursor:pointer;color:var(--muted);transition:all .12s;text-align:center;}
-.db:hover{color:var(--ink);border-color:var(--ink);}
-.db.on{background:var(--ink);color:white;border-color:var(--ink);}
-.db.hoy{border-color:var(--gold);color:var(--gold);}
-.db.hoy.on{background:var(--gold);color:var(--ink);border-color:var(--gold);}
+.db:hover{color:var(--ink);border-color:var(--ink);}.db.on{background:var(--ink);color:white;border-color:var(--ink);}
+.db.hoy{border-color:var(--gold);color:var(--gold);}.db.hoy.on{background:var(--gold);color:var(--ink);}
 .db-date{font-size:10px;opacity:.7;display:block;}
-
-/* CARD */
 .card{background:white;border:1px solid var(--line);border-radius:var(--r);margin-bottom:14px;overflow:hidden;}
 .ch{padding:12px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;background:var(--paper2);}
 .ch-t{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
 .cb{padding:20px;}
-
-/* BUTTONS */
 .btn{padding:7px 14px;border-radius:var(--r);border:none;font-family:'IBM Plex Mono';font-size:12px;font-weight:500;cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:5px;text-decoration:none;}
 .btn:disabled{opacity:.5;cursor:not-allowed;}
 .br{background:var(--ink);color:white;}.br:hover:not(:disabled){background:#1e2e4a;}
 .bg{background:transparent;color:var(--muted);border:1px solid var(--line);}.bg:hover:not(:disabled){border-color:var(--ink);color:var(--ink);}
 .bgreen{background:var(--green);color:white;}.bgreen:hover:not(:disabled){background:#196f3d;}
 .bblue{background:var(--blue);color:white;}.bblue:hover:not(:disabled){background:#1a5276;}
-.bgold{background:var(--gold);color:var(--ink);}.bgold:hover:not(:disabled){background:#e09800;}
+.bred{background:var(--red);color:white;}.bgold{background:var(--gold);color:var(--ink);}.bgold:hover:not(:disabled){background:#e09800;}
 .sm{padding:5px 10px;font-size:11px;}.xs{padding:2px 7px;font-size:10px;}
-
-/* SCHEDULE */
 .sw{overflow-x:auto;}
 .sch{width:100%;border-collapse:collapse;min-width:860px;}
 .sch th{background:var(--paper2);padding:11px 16px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border-bottom:2px solid var(--line);}
 .sch td{padding:14px 16px;border-bottom:1px solid var(--line);vertical-align:top;}
-.sch tr:last-child td{border-bottom:none;}
-.sch tr.rec td{background:var(--paper3);}
+.sch tr:last-child td{border-bottom:none;}.sch tr.rec td{background:var(--paper3);}
 .sch tbody tr:not(.rec):hover td{background:#f5f7fc;}
-.sn{font-size:12px;font-weight:600;color:var(--gold);}
-.st{font-size:12px;color:var(--muted);margin-top:1px;}
-
-/* GUARDIA CARDS */
+.sn{font-size:12px;font-weight:600;color:var(--gold);}.st{font-size:12px;color:var(--muted);margin-top:1px;}
 .gcard{background:var(--paper2);border:1px solid var(--line);border-radius:5px;padding:10px 12px;margin-bottom:7px;}
-.gcard:last-child{margin-bottom:0;}
-.ausente-name{font-size:13px;font-weight:600;}
-.curso-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px;background:#fef3dc;color:#a06c00;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;}
-.aula-tag{font-size:12px;color:var(--muted);}
-.tarea-txt{font-size:12px;color:var(--ink);margin-top:5px;background:white;border:1px solid var(--line);border-radius:4px;padding:5px 9px;font-style:italic;}
+.curso-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px;background:#fef3dc;color:#a06c00;text-transform:uppercase;white-space:nowrap;}
+.tarea-txt{font-size:12px;margin-top:5px;background:white;border:1px solid var(--line);border-radius:4px;padding:5px 9px;font-style:italic;}
 .chips-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px;align-items:center;}
 .chip{display:flex;align-items:center;gap:4px;padding:3px 8px 3px 6px;border-radius:20px;border:1px solid var(--line);background:white;font-size:12px;}
 .chip-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.chip-rm{background:none;border:none;color:#bbb;cursor:pointer;font-size:13px;padding:0 2px;line-height:1;}
-.chip-rm:hover{color:#c0392b;}
+.chip-rm{background:none;border:none;color:#bbb;cursor:pointer;font-size:13px;padding:0 2px;line-height:1;}.chip-rm:hover{color:var(--red);}
 .add-chip{width:26px;height:26px;border-radius:50%;border:1px dashed var(--line);background:transparent;font-size:16px;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;flex-shrink:0;}
 .add-chip:hover{border-color:var(--blue);color:var(--blue);}
-.unassigned{font-size:12px;color:var(--muted);font-style:italic;}
 .add-gslot{border:1px dashed var(--line);background:transparent;border-radius:5px;padding:7px 11px;width:100%;font-family:'IBM Plex Mono';font-size:12px;color:var(--muted);cursor:pointer;transition:all .12s;text-align:left;margin-top:4px;}
 .add-gslot:hover{border-color:var(--gold);color:var(--gold);}
-
-/* BADGES */
 .badge{display:inline-block;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;}
-.bok{background:#d5f5e3;color:#1e8449;}.bwarn{background:#fdebd0;color:#a04000;}
-.binfo{background:#d6eaf8;color:#1a5276;}.bgrey{background:var(--paper2);color:var(--muted);}
-.bgold-b{background:#fef3dc;color:#a06c00;}
-
-/* STATS */
+.bok{background:#d5f5e3;color:#1e8449;}.bwarn{background:#fdebd0;color:#a04000;}.binfo{background:#d6eaf8;color:#1a5276;}.bgrey{background:var(--paper2);color:var(--muted);}.bgold-b{background:#fef3dc;color:#a06c00;}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
 .stat{background:white;border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;}
 .stat-n{font-family:'Instrument Serif',serif;font-size:42px;line-height:1;}
 .stat-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-top:3px;}
-
-/* FORM */
-.fg{display:flex;flex-direction:column;gap:5px;}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:11px;}
 .fl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);}
 .fc{padding:8px 11px;background:var(--paper2);border:1px solid var(--line);border-radius:var(--r);color:var(--ink);font-family:'IBM Plex Mono';font-size:14px;outline:none;transition:border-color .12s;width:100%;}
-.fc:focus{border-color:var(--blue);background:white;}
-select.fc option{background:white;}
-textarea.fc{resize:vertical;min-height:64px;}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
-.full{grid-column:1/-1;}
-
-/* PDF ZONE */
+.fc:focus{border-color:var(--blue);background:white;}select.fc option{background:white;}textarea.fc{resize:vertical;min-height:64px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}.full{grid-column:1/-1;}
 .pdfzone{border:2px dashed var(--line);border-radius:var(--r);padding:16px;text-align:center;cursor:pointer;background:var(--paper2);transition:all .15s;font-size:12px;color:var(--muted);}
-.pdfzone:hover{border-color:var(--gold);}
-.pdfzone.has{border-color:var(--green);background:#f0faf4;color:var(--green);}
-
-/* MODAL */
-.ov{display:none;position:fixed;inset:0;background:rgba(26,26,46,.55);backdrop-filter:blur(3px);z-index:500;align-items:center;justify-content:center;padding:16px;}
+.pdfzone:hover{border-color:var(--gold);}.pdfzone.has{border-color:var(--green);background:#f0faf4;color:var(--green);}
+.ov{display:none;position:fixed;inset:0;background:rgba(26,26,46,.6);backdrop-filter:blur(3px);z-index:500;align-items:center;justify-content:center;padding:16px;}
 .ov.on{display:flex;animation:fu .15s ease;}
 .modal{background:var(--paper);border:1px solid var(--line);border-radius:10px;width:100%;max-width:580px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);}
 .mhd{padding:18px 22px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;background:var(--paper2);}
 .mhd-t{font-family:'Instrument Serif',serif;font-size:22px;}
-.mx{background:transparent;border:none;font-size:22px;color:var(--muted);cursor:pointer;padding:2px 6px;border-radius:4px;}
-.mx:hover{color:var(--ink);}
-.mb{padding:20px 22px;}
-.mf{padding:13px 22px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:9px;}
-
-/* TRAMO BUILDER */
+.mx{background:transparent;border:none;font-size:22px;color:var(--muted);cursor:pointer;padding:2px 6px;border-radius:4px;}.mx:hover{color:var(--ink);}
+.mb{padding:20px 22px;}.mf{padding:13px 22px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:9px;}
 .tc{background:white;border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:9px;}
 .tc-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-.tc-l{font-size:11px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:.06em;}
-.atb{border:1px dashed var(--line);background:transparent;border-radius:var(--r);padding:9px;width:100%;font-family:'IBM Plex Mono';font-size:12px;color:var(--muted);cursor:pointer;transition:all .12s;text-align:center;}
-.atb:hover{border-color:var(--blue);color:var(--blue);}
-.rmb{background:transparent;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:2px 4px;border-radius:4px;}
-.rmb:hover{color:#c0392b;}
-
-/* DROP ZONE */
+.tc-l{font-size:11px;font-weight:600;color:var(--gold);text-transform:uppercase;}
 .dz{border:2px dashed var(--line);border-radius:var(--r);padding:28px;text-align:center;cursor:pointer;transition:all .15s;background:var(--paper2);}
 .dz:hover,.dz.drag{border-color:var(--blue);background:#eaf4fb;}
-.dz-icon{font-size:32px;margin-bottom:8px;}
-.dz-txt{font-size:13px;color:var(--muted);line-height:1.6;}
-
-/* PROF LIST */
+.dz-icon{font-size:32px;margin-bottom:8px;}.dz-txt{font-size:13px;color:var(--muted);line-height:1.6;}
 .prow{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);}
 .prow:last-child{border-bottom:none;}
 .pav{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:white;flex-shrink:0;}
-.pname{font-size:14px;font-weight:500;}.pdept{font-size:12px;color:var(--muted);}
-.mla{margin-left:auto;}
-
-/* CSV TABLE */
+.pname{font-size:14px;font-weight:500;}.pdept{font-size:12px;color:var(--muted);}.mla{margin-left:auto;}
 .pt{width:100%;border-collapse:collapse;font-size:12px;}
 .pt th{background:var(--paper2);padding:7px 10px;text-align:left;border-bottom:1px solid var(--line);color:var(--muted);}
-.pt td{padding:7px 10px;border-bottom:1px solid var(--line);}
-.pt tr:last-child td{border-bottom:none;}
-
-/* CALENDAR MINI */
-.cal-wrap{background:white;border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:18px;}
-.cal-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.cal-title{font-family:'Instrument Serif',serif;font-size:18px;}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
-.cal-dh{font-size:10px;text-align:center;color:var(--muted);padding:3px;font-weight:600;text-transform:uppercase;}
-.cal-d{font-size:11px;text-align:center;padding:5px 2px;border-radius:4px;cursor:pointer;transition:all .12s;border:1px solid transparent;}
-.cal-d:hover{background:var(--paper2);}
-.cal-d.other{color:var(--line);}
-.cal-d.today{border-color:var(--gold);color:var(--gold);font-weight:600;}
-.cal-d.sel{background:var(--ink);color:white;border-color:var(--ink);}
-.cal-d.has-g{position:relative;}.cal-d.has-g::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--gold);}
-.cal-d.weekend{opacity:.4;cursor:default;}
-
+.pt td{padding:7px 10px;border-bottom:1px solid var(--line);}.pt tr:last-child td{border-bottom:none;}
+/* LOGIN */
+.login-screen{position:fixed;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:999;padding:20px;}
+.login-screen.hide{display:none;}
+.login-box{background:var(--paper);border-radius:12px;padding:40px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.4);}
+.login-logo{display:flex;align-items:center;gap:12px;margin-bottom:28px;justify-content:center;}
+.login-title{font-family:'Instrument Serif',serif;font-size:28px;text-align:center;margin-bottom:6px;}
+.login-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:24px;line-height:1.6;}
+.login-err{background:#fdebd0;border:1px solid #f5a623;border-radius:6px;padding:10px 14px;font-size:12px;color:#a04000;margin-bottom:14px;display:none;}
+/* AULAS */
+.aulas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+.aula-card{background:white;border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;}
+.aula-card.libre{border-color:var(--green);background:#f0faf4;}
+.aula-card.ocupada{border-color:var(--red);background:#fdf1f0;}
+.aula-card.mia{border-color:var(--gold);background:#fef9ee;}
+/* HORARIO PROF */
+.hprof-grid{display:grid;grid-template-columns:90px repeat(5,1fr);gap:3px;font-size:11px;}
+.hprof-hd{background:var(--ink);color:white;padding:7px 8px;text-align:center;font-weight:600;border-radius:3px;}
+.hprof-slot{padding:7px 8px;background:var(--paper2);border-radius:3px;text-align:center;min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;}
+.hprof-slot.clase{background:#dde8f7;color:var(--ink);}
+.hprof-slot.guardia{background:#fef3dc;color:#a06c00;font-weight:700;}
+.hprof-slot.libre{background:#f0faf4;color:var(--green);}
+.hprof-slot.recreo{background:var(--paper3);color:var(--muted);font-size:10px;}
+.hprof-slot.ref{background:var(--paper2);font-weight:600;font-size:11px;color:var(--ink);}
 /* LOADING */
-.loading-screen{position:fixed;inset:0;background:var(--paper);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:16px;}
+.loading-screen{position:fixed;inset:0;background:var(--paper);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:998;gap:16px;}
 .loading-screen.hide{display:none;}
 .spinner{width:36px;height:36px;border:3px solid var(--line);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
-
 .div{height:1px;background:var(--line);margin:14px 0;}
 .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 20px;border-radius:20px;font-size:13px;z-index:900;box-shadow:0 4px 20px rgba(0,0,0,.3);display:none;white-space:nowrap;}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 20px;border-radius:20px;font-size:13px;z-index:900;box-shadow:0 4px 20px rgba(0,0,0,.3);display:none;}
 .toast.on{display:block;animation:fu .2s ease;}
-
-@media(max-width:640px){
-  .g2,.g3{grid-template-columns:1fr;}
-  .wrap{padding:14px 12px;}
-  header{padding:0 14px;height:auto;padding:8px 14px;}
-  .nav{display:none;}
-}
+@media(max-width:640px){.g2,.g3{grid-template-columns:1fr;}.wrap{padding:14px 12px;}header{padding:8px 14px;height:auto;}.nav{display:none;}}
 </style>
 </head>
 <body>
 
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">
+      <img src="data:image/jpeg;base64,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" alt="Logo" style="height:48px;width:48px;object-fit:contain;border-radius:6px;">
+      <div><div style="font-family:'Instrument Serif',serif;font-size:20px;color:var(--ink)">IES María de Molina</div>
+      <div style="font-size:11px;color:var(--muted)">Gestión de Guardias</div></div>
+    </div>
+
+    <!-- VIEW: LOGIN -->
+    <div id="vLogin">
+      <div class="login-title">Acceder</div>
+      <div class="login-sub">Introduce tu nombre y contraseña</div>
+      <div class="login-err" id="loginErr"></div>
+      <div class="fg"><label class="fl">Nombre</label>
+        <select class="fc" id="loginNombre"><option value="">— Selecciona —</option></select>
+      </div>
+      <div class="fg"><label class="fl">Contraseña</label>
+        <input class="fc" type="password" id="loginPass" placeholder="••••••" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="btn br" style="width:100%;justify-content:center;margin-top:4px" onclick="doLogin()" id="btnLogin">Entrar</button>
+      <div style="text-align:center;margin-top:14px;display:flex;flex-direction:column;gap:8px">
+        <button class="btn bg sm" onclick="showV('vReg')">¿Primera vez? Registrarse</button>
+        <button class="btn bgold sm" id="setupBtn" style="display:none" onclick="showV('vSetup')">⚙️ Configuración inicial (jefatura)</button>
+      </div>
+    </div>
+
+    <!-- VIEW: REGISTRO -->
+    <div id="vReg" style="display:none">
+      <div class="login-title">Registro</div>
+      <div class="login-sub">Crea tu contraseña de acceso.<br>Solo puedes registrarte si jefatura ya te ha añadido.</div>
+      <div class="login-err" id="regErr"></div>
+      <div class="fg"><label class="fl">Nombre</label>
+        <select class="fc" id="regNombre"><option value="">— Selecciona —</option></select>
+      </div>
+      <div class="fg"><label class="fl">Contraseña</label>
+        <input class="fc" type="password" id="regPass1" placeholder="Mínimo 4 caracteres">
+      </div>
+      <div class="fg"><label class="fl">Repetir contraseña</label>
+        <input class="fc" type="password" id="regPass2" onkeydown="if(event.key==='Enter')doRegister()">
+      </div>
+      <button class="btn bgreen" style="width:100%;justify-content:center;margin-top:4px" onclick="doRegister()" id="btnReg">Crear cuenta</button>
+      <div style="text-align:center;margin-top:14px"><button class="btn bg sm" onclick="showV('vLogin')">← Volver</button></div>
+    </div>
+
+    <!-- VIEW: SETUP INICIAL -->
+    <div id="vSetup" style="display:none">
+      <div class="login-title">Configuración inicial</div>
+      <div class="login-sub">Crea la cuenta de jefatura de estudios.<br>Este acceso solo aparece hasta que se crea la primera cuenta de jefatura.</div>
+      <div class="login-err" id="setupErr"></div>
+      <div class="fg"><label class="fl">Nombre completo</label>
+        <input class="fc" id="setupNom" placeholder="Nombre Apellido Apellido">
+      </div>
+      <div class="fg"><label class="fl">Departamento</label>
+        <input class="fc" id="setupDep" placeholder="Jefatura de Estudios">
+      </div>
+      <div class="fg"><label class="fl">Contraseña</label>
+        <input class="fc" type="password" id="setupPass1" placeholder="Mínimo 4 caracteres">
+      </div>
+      <div class="fg"><label class="fl">Repetir contraseña</label>
+        <input class="fc" type="password" id="setupPass2" onkeydown="if(event.key==='Enter')doSetup()">
+      </div>
+      <button class="btn bgold" style="width:100%;justify-content:center;margin-top:4px" onclick="doSetup()" id="btnSetup">Crear cuenta de jefatura</button>
+      <div style="text-align:center;margin-top:14px"><button class="btn bg sm" onclick="showV('vLogin')">← Volver</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- LOADING -->
 <div class="loading-screen" id="loadingScreen">
   <div class="spinner"></div>
   <div style="font-size:13px;color:var(--muted)">Conectando…</div>
@@ -213,67 +219,84 @@ textarea.fc{resize:vertical;min-height:64px;}
   <nav class="nav">
     <button class="nb on"  onclick="goTo('horario',this)">Horario</button>
     <button class="nb"     onclick="goTo('mis',this)">Mis Guardias</button>
+    <button class="nb"     onclick="goTo('mihorario',this)">Mi Horario</button>
+    <button class="nb"     onclick="goTo('aulas',this)">Aulas</button>
     <button class="nb"     onclick="goTo('profs',this)">Profesores</button>
-    <button class="nb"     onclick="goTo('csv',this)">Importar CSV</button>
+    <button class="nb"     onclick="goTo('csv',this)">CSV</button>
   </nav>
   <div style="display:flex;align-items:center;gap:10px">
-    <div class="sync-dot loading" id="syncDot" title="Conectando..."></div>
-    <div class="uchip" onclick="openSelUser()">
+    <div class="sync-dot loading" id="syncDot"></div>
+    <div class="uchip" onclick="logout()">
       <div class="uav" id="hAv">?</div>
-      <span class="uname" id="hName">Seleccionar</span>
+      <span class="uname" id="hName">—</span>
+      <span style="font-size:10px;color:#aaa;margin-left:2px">salir</span>
     </div>
   </div>
 </header>
 
 <div class="wrap">
-
-  <!-- HORARIO -->
   <div class="page on" id="pg-horario">
     <div class="ph">
-      <div><div class="ph-t">Horario de Guardias</div><div class="ph-s" id="schWeekLbl">Cargando…</div></div>
+      <div><div class="ph-t">Horario de Guardias</div><div class="ph-s" id="schWeekLbl">—</div></div>
       <div class="row">
-        <button class="btn bg sm" onclick="openAsignar()">👥 Asignar guardias</button>
-        <button class="btn bg sm" onclick="goTo('csv',document.querySelectorAll('.nb')[3])">↑ CSV</button>
-        <button class="btn br" onclick="openAddGuardia()">+ Nueva ausencia</button>
+        <button class="btn bg sm" id="btnAsignar" onclick="openAsignar()">👥 Asignar</button>
+        <button class="btn br" id="btnNuevaAus" onclick="openAddGuardia()">+ Nueva ausencia</button>
       </div>
     </div>
-    <!-- Week navigation -->
     <div class="wnav">
-      <button class="wbtn" onclick="changeWeek(-1)">← Semana anterior</button>
+      <button class="wbtn" onclick="changeWeek(-1)">← Anterior</button>
       <div class="wnav-lbl" id="weekLbl">—</div>
-      <button class="wbtn" onclick="changeWeek(1)">Semana siguiente →</button>
+      <button class="wbtn" onclick="changeWeek(1)">Siguiente →</button>
       <button class="wbtn today" onclick="goToday()">Hoy</button>
     </div>
     <div class="dbar" id="dbar"></div>
     <div class="card" style="padding:0">
       <div class="sw"><table class="sch">
-        <thead><tr>
-          <th style="width:110px">Tramo</th>
-          <th style="width:210px">Ausencia</th>
-          <th>Tarea</th>
-          <th style="width:230px">Cubre la guardia</th>
-          <th style="width:110px">Estado</th>
-        </tr></thead>
+        <thead><tr><th style="width:110px">Tramo</th><th style="width:210px">Ausencia</th><th>Tarea</th><th style="width:230px">Cubre</th><th style="width:110px">Estado</th></tr></thead>
         <tbody id="schBody"></tbody>
       </table></div>
     </div>
   </div>
 
-  <!-- MIS GUARDIAS -->
   <div class="page" id="pg-mis">
     <div class="ph">
-      <div><div class="ph-t">Mis Guardias</div><div class="ph-s" id="myUser">Selecciona tu nombre →</div></div>
+      <div><div class="ph-t">Mis Guardias</div><div class="ph-s" id="myUserLbl">—</div></div>
       <button class="btn br" onclick="openAssignSelf(null,null)">+ Apuntarme</button>
     </div>
     <div class="stats" id="myStats"></div>
-    <div class="card"><div class="ch"><span class="ch-t">Este curso</span><button class="btn bg sm" style="margin-left:auto" onclick="toggleMisView(this)">Ver todo el curso</button></div><div class="cb" id="myList"></div></div>
+    <div class="card">
+      <div class="ch"><span class="ch-t">Guardias</span><button class="btn bg sm" onclick="toggleMisView(this)">Ver todo el curso</button></div>
+      <div class="cb" id="myList"></div>
+    </div>
   </div>
 
-  <!-- PROFESORES -->
+  <div class="page" id="pg-mihorario">
+    <div class="ph">
+      <div><div class="ph-t">Mi Horario</div><div class="ph-s">Las horas de guardia aparecen en amarillo</div></div>
+      <button class="btn bg sm" onclick="goTo('csv',document.querySelectorAll('.nb')[5])">↑ Importar horario</button>
+    </div>
+    <div class="card"><div class="cb" id="miHorarioBody"></div></div>
+  </div>
+
+  <div class="page" id="pg-aulas">
+    <div class="ph">
+      <div><div class="ph-t">Reserva de Aulas</div><div class="ph-s">Consulta disponibilidad y reserva</div></div>
+      <button class="btn br" id="btnAddAula" onclick="openModal('mAddAula')">+ Añadir aula</button>
+    </div>
+    <div class="wnav">
+      <button class="wbtn" onclick="changeWeekAulas(-1)">← Anterior</button>
+      <div class="wnav-lbl" id="aulasWeekLbl">—</div>
+      <button class="wbtn" onclick="changeWeekAulas(1)">Siguiente →</button>
+      <button class="wbtn today" onclick="goTodayAulas()">Hoy</button>
+    </div>
+    <div class="dbar" id="dbarAulas"></div>
+    <div id="aulasBody"></div>
+  </div>
+
   <div class="page" id="pg-profs">
     <div class="ph">
       <div><div class="ph-t">Profesores</div><div class="ph-s">Ranking por minutos de guardia</div></div>
-      <button class="btn br" onclick="openModal('mAddProf')">+ Añadir</button>
+      <button class="btn br" id="btnAddProf" onclick="openModal('mAddProf')">+ Añadir</button>
     </div>
     <div class="card">
       <div class="ch"><span class="ch-t">Claustro</span><span class="badge bgrey" id="profCnt">—</span></div>
@@ -281,1013 +304,496 @@ textarea.fc{resize:vertical;min-height:64px;}
     </div>
   </div>
 
-  <!-- CSV -->
   <div class="page" id="pg-csv">
-    <div class="ph"><div><div class="ph-t">Importar CSV</div><div class="ph-s">Carga horarios y profesores</div></div></div>
+    <div class="ph"><div><div class="ph-t">Importar CSV</div></div></div>
+    <div class="card"><div class="ch"><span class="ch-t">Ausencias</span></div><div class="cb">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Columnas: <strong>fecha;tramo;ausente;curso;aula;tarea</strong> — fecha: YYYY-MM-DD</div>
+      <div class="row" style="margin-bottom:12px"><button class="btn bg sm" onclick="dlTpl('horario')">⬇ Plantilla</button></div>
+      <div class="dz" onclick="document.getElementById('fiH').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event,'H')"><div class="dz-icon">📅</div><div class="dz-txt"><strong>Arrastra o haz clic</strong></div></div>
+      <input type="file" id="fiH" accept=".csv,.txt" style="display:none" onchange="handleFile(this.files[0],'H')">
+    </div></div>
+    <div id="csvHBox" style="display:none"><div class="card"><div class="ch"><span class="ch-t">Vista previa</span><span class="badge binfo" id="csvHCnt">—</span></div><div class="cb">
+      <div style="overflow-x:auto"><table class="pt" id="prevHTbl"></table></div><div class="div"></div>
+      <div class="row" style="justify-content:flex-end"><button class="btn bg sm" onclick="document.getElementById('csvHBox').style.display='none'">Cancelar</button><button class="btn bgreen" id="btnImportH" onclick="importCSV('H')">✓ Importar</button></div>
+    </div></div></div>
 
-    <!-- HORARIO -->
-    <div class="card">
-      <div class="ch"><span class="ch-t">Horario de ausencias</span></div>
-      <div class="cb">
-        <div style="overflow-x:auto"><table class="pt">
-          <thead><tr><th>fecha</th><th>tramo</th><th>ausente</th><th>curso</th><th>aula</th><th>tarea</th></tr></thead>
-          <tbody>
-            <tr><td>2025-09-15</td><td>1</td><td>Ana García</td><td>3ºESO A</td><td>Aula 12</td><td>Ejercicios págs. 45-46</td></tr>
-          </tbody>
-        </table></div>
-        <div style="font-size:11px;color:var(--muted);margin:10px 0 14px;line-height:1.9">
-          <strong style="color:var(--ink)">Fecha:</strong> formato YYYY-MM-DD (ej: 2025-09-15) &nbsp;·&nbsp;
-          <strong style="color:var(--ink)">Tramos:</strong> 1→08:15 · 2→09:10 · 3→Recreo · 4→10:20 · 5→11:15 · 6→Recreo · 7→12:25 · 8→13:20
-        </div>
-        <div class="row" style="margin-bottom:14px">
-          <button class="btn bg sm" onclick="dlHorarioTemplate()">⬇ Plantilla</button>
-        </div>
-        <div class="dz" id="dzHorario" onclick="document.getElementById('fiH').click()"
-          ondragover="event.preventDefault();this.classList.add('drag')"
-          ondragleave="this.classList.remove('drag')"
-          ondrop="handleDropH(event)">
-          <div class="dz-icon">📅</div>
-          <div class="dz-txt"><strong>Arrastra o haz clic para subir el CSV</strong></div>
-        </div>
-        <input type="file" id="fiH" accept=".csv,.txt" style="display:none" onchange="handleFileH(this.files[0])">
-      </div>
-    </div>
-    <div id="csvHBox" style="display:none">
-      <div class="card"><div class="ch"><span class="ch-t">Vista previa</span><span class="badge binfo" id="csvHCnt">—</span></div>
-        <div class="cb"><div style="overflow-x:auto"><table class="pt" id="prevHTbl"></table></div>
-          <div class="div"></div>
-          <div class="row" style="justify-content:flex-end">
-            <button class="btn bg sm" onclick="document.getElementById('csvHBox').style.display='none'">Cancelar</button>
-            <button class="btn bgreen" id="btnImportH" onclick="importHorario()">✓ Importar</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div class="card" style="border-top:3px solid var(--blue)"><div class="ch"><span class="ch-t" style="color:var(--blue)">Claustro</span></div><div class="cb">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Columnas: <strong>nombre;departamento</strong></div>
+      <div class="row" style="margin-bottom:12px"><button class="btn bg sm" onclick="dlTpl('claustro')">⬇ Plantilla</button></div>
+      <div class="dz" onclick="document.getElementById('fiP').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event,'P')"><div class="dz-icon">👥</div><div class="dz-txt"><strong>Arrastra o haz clic</strong></div></div>
+      <input type="file" id="fiP" accept=".csv,.txt" style="display:none" onchange="handleFile(this.files[0],'P')">
+    </div></div>
+    <div id="csvPBox" style="display:none"><div class="card"><div class="ch"><span class="ch-t">Vista previa — Claustro</span><span class="badge binfo" id="csvPCnt">—</span></div><div class="cb">
+      <div style="overflow-x:auto"><table class="pt" id="prevPTbl"></table></div><div class="div"></div>
+      <div class="row" style="justify-content:flex-end"><button class="btn bg sm" onclick="document.getElementById('csvPBox').style.display='none'">Cancelar</button><button class="btn bblue" id="btnImportP" onclick="importCSV('P')">✓ Importar</button></div>
+    </div></div></div>
 
-    <!-- CLAUSTRO -->
-    <div class="card" style="border-top:3px solid var(--blue)">
-      <div class="ch"><span class="ch-t" style="color:var(--blue)">Claustro (profesores)</span></div>
-      <div class="cb">
-        <div style="overflow-x:auto"><table class="pt">
-          <thead><tr><th>nombre</th><th>departamento</th></tr></thead>
-          <tbody><tr><td>Ana García López</td><td>Matemáticas</td></tr></tbody>
-        </table></div>
-        <div class="div"></div>
-        <div class="row" style="margin-bottom:14px"><button class="btn bg sm" onclick="dlClaustroTemplate()">⬇ Plantilla</button></div>
-        <div class="dz" id="dzProf" onclick="document.getElementById('fiP').click()"
-          ondragover="event.preventDefault();this.classList.add('drag')"
-          ondragleave="this.classList.remove('drag')"
-          ondrop="handleDropP(event)">
-          <div class="dz-icon">👥</div>
-          <div class="dz-txt"><strong>Arrastra o haz clic para subir el CSV del claustro</strong></div>
-        </div>
-        <input type="file" id="fiP" accept=".csv,.txt" style="display:none" onchange="handleFileP(this.files[0])">
-      </div>
-    </div>
-    <div id="csvPBox" style="display:none">
-      <div class="card"><div class="ch"><span class="ch-t">Vista previa — Claustro</span><span class="badge binfo" id="csvPCnt">—</span></div>
-        <div class="cb"><div style="overflow-x:auto"><table class="pt" id="prevPTbl"></table></div>
-          <div class="div"></div>
-          <div class="row" style="justify-content:flex-end">
-            <button class="btn bg sm" onclick="document.getElementById('csvPBox').style.display='none'">Cancelar</button>
-            <button class="btn bblue" id="btnImportP" onclick="importClaustro()">✓ Importar profesores</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div class="card" style="border-top:3px solid var(--gold)"><div class="ch"><span class="ch-t" style="color:#a06c00">Horario de guardias por tramo</span></div><div class="cb">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Columnas: <strong>dia;tramo;profesor</strong> — dia = Lunes…Viernes</div>
+      <div class="row" style="margin-bottom:12px"><button class="btn bg sm" onclick="dlTpl('asign')">⬇ Plantilla</button></div>
+      <div class="dz" onclick="document.getElementById('fiA').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event,'A')"><div class="dz-icon">📋</div><div class="dz-txt"><strong>Arrastra o haz clic</strong><br>Reemplaza asignaciones actuales</div></div>
+      <input type="file" id="fiA" accept=".csv,.txt" style="display:none" onchange="handleFile(this.files[0],'A')">
+    </div></div>
+    <div id="csvABox" style="display:none"><div class="card"><div class="ch"><span class="ch-t">Vista previa — Guardias</span><span class="badge binfo" id="csvACnt">—</span></div><div class="cb">
+      <div style="overflow-x:auto"><table class="pt" id="prevATbl"></table></div><div class="div"></div>
+      <div style="background:#fef3dc;border:1px solid #f5d78e;border-radius:6px;padding:10px 14px;font-size:12px;margin-bottom:12px">⚠️ Reemplazará todas las asignaciones actuales.</div>
+      <div class="row" style="justify-content:flex-end"><button class="btn bg sm" onclick="document.getElementById('csvABox').style.display='none'">Cancelar</button><button class="btn br" id="btnImportA" onclick="importCSV('A')">✓ Importar</button></div>
+    </div></div></div>
 
-    <!-- ASIGNACIONES -->
-    <div class="card" style="border-top:3px solid var(--gold)">
-      <div class="ch"><span class="ch-t" style="color:#a06c00">Horario de guardias (quién tiene guardia cada tramo)</span></div>
-      <div class="cb">
-        <div style="overflow-x:auto"><table class="pt">
-          <thead><tr><th>dia</th><th>tramo</th><th>profesor</th></tr></thead>
-          <tbody>
-            <tr><td>Lunes</td><td>1</td><td>Ana García</td></tr>
-            <tr><td>Lunes</td><td>1</td><td>Luis Martín</td></tr>
-          </tbody>
-        </table></div>
-        <div style="font-size:11px;color:var(--muted);margin:8px 0 14px">dia = Lunes/Martes/Miércoles/Jueves/Viernes · Se aplica a todas las semanas del curso</div>
-        <div class="row" style="margin-bottom:14px"><button class="btn bg sm" onclick="dlAsignTemplate()">⬇ Plantilla</button></div>
-        <div class="dz" id="dzAsign" onclick="document.getElementById('fiAsign').click()"
-          ondragover="event.preventDefault();this.classList.add('drag')"
-          ondragleave="this.classList.remove('drag')"
-          ondrop="handleDropAsign(event)">
-          <div class="dz-icon">📋</div>
-          <div class="dz-txt"><strong>Arrastra o haz clic para subir</strong><br>Reemplaza todas las asignaciones actuales</div>
-        </div>
-        <input type="file" id="fiAsign" accept=".csv,.txt" style="display:none" onchange="handleFileAsign(this.files[0])">
-      </div>
-    </div>
-    <div id="csvAsignBox" style="display:none">
-      <div class="card"><div class="ch"><span class="ch-t">Vista previa — Guardias</span><span class="badge binfo" id="csvAsignCnt">—</span></div>
-        <div class="cb"><div style="overflow-x:auto"><table class="pt" id="prevAsignTbl"></table></div>
-          <div class="div"></div>
-          <div style="background:#fef3dc;border:1px solid #f5d78e;border-radius:6px;padding:10px 14px;font-size:12px;margin-bottom:12px">⚠️ Esto reemplazará todas las asignaciones actuales.</div>
-          <div class="row" style="justify-content:flex-end">
-            <button class="btn bg sm" onclick="document.getElementById('csvAsignBox').style.display='none'">Cancelar</button>
-            <button class="btn br" id="btnImportAsign" onclick="importAsignaciones()">✓ Importar</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-</div><!-- /wrap -->
-
-<!-- MODAL: NUEVA AUSENCIA -->
-<div class="ov" id="mGuardia">
-  <div class="modal">
-    <div class="mhd"><div class="mhd-t">Nueva ausencia</div><button class="mx" onclick="cm('mGuardia')">×</button></div>
-    <div class="mb">
-      <div class="g2">
-        <div class="fg"><label class="fl">Fecha</label><input class="fc" type="date" id="gFecha"></div>
-        <div class="fg"><label class="fl">Tramo</label><select class="fc" id="gSlot"></select></div>
-      </div>
-      <div class="g2">
-        <div class="fg"><label class="fl">Profesor ausente</label><select class="fc" id="gAusente"></select></div>
-        <div class="fg"><label class="fl">Curso</label><input class="fc" id="gCurso" placeholder="ej: 3ºESO A"></div>
-      </div>
-      <div class="g2">
-        <div class="fg"><label class="fl">Aula</label><input class="fc" id="gAula" placeholder="ej: Aula 12"></div>
-        <div class="fg"><label class="fl">Motivo</label><input class="fc" id="gMotivo" placeholder="Baja, reunión..."></div>
-      </div>
-      <div class="fg" style="margin-bottom:11px"><label class="fl">Tarea para los alumnos</label>
-        <textarea class="fc" id="gTarea" placeholder="ej: Ejercicios págs. 45-46..."></textarea>
-      </div>
-      <div class="fg">
-        <label class="fl">PDF con la tarea <span style="color:var(--muted);font-weight:400;text-transform:none">(opcional)</span></label>
-        <div class="pdfzone" id="gPdfZone" onclick="document.getElementById('gPdfFile').click()"
-          ondragover="event.preventDefault();this.style.borderColor='var(--gold)'"
-          ondragleave="this.style.borderColor=''"
-          ondrop="handlePdfDrop(event,'g')">
-          📎 Arrastra un PDF o haz clic para seleccionar
-        </div>
-        <input type="file" id="gPdfFile" accept=".pdf" style="display:none" onchange="handlePdfSelect(this,'g')">
-      </div>
-    </div>
-    <div class="mf">
-      <button class="btn bg" onclick="cm('mGuardia')">Cancelar</button>
-      <button class="btn br" id="btnSaveG" onclick="saveGuardia()">Guardar</button>
-    </div>
+    <div class="card" style="border-top:3px solid var(--green)"><div class="ch"><span class="ch-t" style="color:var(--green)">Horario semanal de profesores</span></div><div class="cb">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Columnas: <strong>profesor;dia;tramo;tipo;grupo;aula</strong> — tipo = clase/guardia/libre/recreo</div>
+      <div class="row" style="margin-bottom:12px"><button class="btn bg sm" onclick="dlTpl('horprof')">⬇ Plantilla</button></div>
+      <div class="dz" onclick="document.getElementById('fiHP').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event,'HP')"><div class="dz-icon">📚</div><div class="dz-txt"><strong>Arrastra o haz clic</strong><br>Importa el horario completo del claustro</div></div>
+      <input type="file" id="fiHP" accept=".csv,.txt" style="display:none" onchange="handleFile(this.files[0],'HP')">
+    </div></div>
+    <div id="csvHPBox" style="display:none"><div class="card"><div class="ch"><span class="ch-t">Vista previa — Horarios</span><span class="badge binfo" id="csvHPCnt">—</span></div><div class="cb">
+      <div style="overflow-x:auto"><table class="pt" id="prevHPTbl"></table></div><div class="div"></div>
+      <div style="background:#fef3dc;border:1px solid #f5d78e;border-radius:6px;padding:10px 14px;font-size:12px;margin-bottom:12px">⚠️ Reemplazará todos los horarios actuales.</div>
+      <div class="row" style="justify-content:flex-end"><button class="btn bg sm" onclick="document.getElementById('csvHPBox').style.display='none'">Cancelar</button><button class="btn bgreen" id="btnImportHP" onclick="importCSV('HP')">✓ Importar</button></div>
+    </div></div></div>
   </div>
 </div>
 
-<!-- MODAL: APUNTARME -->
-<div class="ov" id="mApuntar">
-  <div class="modal">
-    <div class="mhd"><div class="mhd-t">Apuntarme a guardia</div><button class="mx" onclick="cm('mApuntar')">×</button></div>
-    <div class="mb">
-      <div class="g2" style="margin-bottom:11px">
-        <div class="fg"><label class="fl">Soy</label><select class="fc" id="aProfId"></select></div>
-        <div class="fg"><label class="fl">Fecha</label><input class="fc" type="date" id="aFecha" onchange="updateGuardiaSelect()"></div>
-      </div>
-      <div class="fg" style="margin-bottom:14px"><label class="fl">Guardia a cubrir</label>
-        <select class="fc" id="aGuardia"><option value="">— Selecciona —</option></select>
-      </div>
-      <div class="div" style="margin:4px 0 13px"></div>
-      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:9px">Tramos que cubro <span style="color:var(--gold)">(hasta 3)</span></div>
-      <div id="aTramos"></div>
-      <button class="atb" id="aTramosBtn" onclick="addATramo()">+ Añadir tramo</button>
-    </div>
-    <div class="mf">
-      <button class="btn bg" onclick="cm('mApuntar')">Cancelar</button>
-      <button class="btn br" id="btnSaveA" onclick="saveApuntar()">Confirmar</button>
+<!-- MODALS -->
+<div class="ov" id="mGuardia"><div class="modal">
+  <div class="mhd"><div class="mhd-t">Nueva ausencia</div><button class="mx" onclick="cm('mGuardia')">×</button></div>
+  <div class="mb">
+    <div class="g2"><div class="fg"><label class="fl">Fecha</label><input class="fc" type="date" id="gFecha"></div><div class="fg"><label class="fl">Tramo</label><select class="fc" id="gSlot"></select></div></div>
+    <div class="g2"><div class="fg"><label class="fl">Profesor ausente</label><select class="fc" id="gAusente"></select></div><div class="fg"><label class="fl">Curso</label><input class="fc" id="gCurso" placeholder="3ºESO A"></div></div>
+    <div class="g2"><div class="fg"><label class="fl">Aula</label><input class="fc" id="gAula" placeholder="Aula 12"></div><div class="fg"><label class="fl">Motivo</label><input class="fc" id="gMotivo" placeholder="Baja, reunión..."></div></div>
+    <div class="fg"><label class="fl">Tarea</label><textarea class="fc" id="gTarea" placeholder="Ejercicios págs. 45-46..."></textarea></div>
+    <div class="fg"><label class="fl">PDF con la tarea (opcional)</label>
+      <div class="pdfzone" id="gPdfZone" onclick="document.getElementById('gPdfFile').click()" ondragover="event.preventDefault()" ondrop="handlePdfDrop(event,'g')">📎 Arrastra un PDF o haz clic</div>
+      <input type="file" id="gPdfFile" accept=".pdf" style="display:none" onchange="handlePdfSel(this,'g')">
     </div>
   </div>
-</div>
+  <div class="mf"><button class="btn bg" onclick="cm('mGuardia')">Cancelar</button><button class="btn br" id="btnSaveG" onclick="saveGuardia()">Guardar</button></div>
+</div></div>
 
-<!-- MODAL: ADD PROF -->
-<div class="ov" id="mAddProf">
-  <div class="modal" style="max-width:420px">
-    <div class="mhd"><div class="mhd-t">Añadir Profesor/a</div><button class="mx" onclick="cm('mAddProf')">×</button></div>
-    <div class="mb">
-      <div class="g2">
-        <div class="fg full"><label class="fl">Nombre completo</label><input class="fc" id="pNom" placeholder="Ana García López"></div>
-        <div class="fg"><label class="fl">Departamento</label><input class="fc" id="pDep" placeholder="Matemáticas"></div>
-        <div class="fg"><label class="fl">Color</label><input type="color" class="fc" id="pCol" value="#2d4166" style="height:40px;cursor:pointer;padding:3px"></div>
+<div class="ov" id="mApuntar"><div class="modal">
+  <div class="mhd"><div class="mhd-t">Apuntarme a guardia</div><button class="mx" onclick="cm('mApuntar')">×</button></div>
+  <div class="mb">
+    <div class="g2"><div class="fg"><label class="fl">Soy</label><select class="fc" id="aProfId"></select></div><div class="fg"><label class="fl">Fecha</label><input class="fc" type="date" id="aFecha" onchange="updateGuardiaSelect()"></div></div>
+    <div class="fg"><label class="fl">Guardia a cubrir</label><select class="fc" id="aGuardia"><option value="">— Selecciona —</option></select></div>
+    <div class="div"></div>
+    <div class="fg"><label class="fl">¿En cuántos tramos divides la guardia?</label>
+      <div style="display:flex;gap:8px" id="tramosOpts">
+        <button type="button" class="btn br" onclick="setNumTramos(1,this)">1 tramo</button>
+        <button type="button" class="btn bg" onclick="setNumTramos(2,this)">2 tramos</button>
+        <button type="button" class="btn bg" onclick="setNumTramos(3,this)">3 tramos</button>
       </div>
     </div>
-    <div class="mf"><button class="btn bg" onclick="cm('mAddProf')">Cancelar</button><button class="btn br" id="btnSaveP" onclick="saveProf()">Añadir</button></div>
+    <div id="aTramos"></div>
   </div>
-</div>
+  <div class="mf"><button class="btn bg" onclick="cm('mApuntar')">Cancelar</button><button class="btn br" id="btnSaveA" onclick="saveApuntar()">Confirmar</button></div>
+</div></div>
 
-<!-- MODAL: ASIGNAR PROFESORES A TRAMO -->
-<div class="ov" id="mAsignar">
-  <div class="modal" style="max-width:500px">
-    <div class="mhd"><div class="mhd-t">Asignar profesores a tramo</div><button class="mx" onclick="cm('mAsignar')">×</button></div>
-    <div class="mb">
-      <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Selecciona qué profesores tienen guardia en este tramo de la semana. Se aplica a todas las semanas del curso.</p>
-      <div class="g2" style="margin-bottom:14px">
-        <div class="fg"><label class="fl">Día</label>
-          <select class="fc" id="asDia" onchange="renderAsignList()"><option>Lunes</option><option>Martes</option><option>Miércoles</option><option>Jueves</option><option>Viernes</option></select>
-        </div>
-        <div class="fg"><label class="fl">Tramo</label><select class="fc" id="asSlot" onchange="renderAsignList()"></select></div>
+<div class="ov" id="mAddProf"><div class="modal" style="max-width:420px">
+  <div class="mhd"><div class="mhd-t">Añadir Profesor/a</div><button class="mx" onclick="cm('mAddProf')">×</button></div>
+  <div class="mb">
+    <div class="g2">
+      <div class="fg full"><label class="fl">Nombre completo</label><input class="fc" id="pNom" placeholder="Ana García López"></div>
+      <div class="fg"><label class="fl">Departamento</label><input class="fc" id="pDep" placeholder="Matemáticas"></div>
+      <div class="fg"><label class="fl">Color</label><input type="color" class="fc" id="pCol" value="#2d4166" style="height:40px;cursor:pointer;padding:3px"></div>
+      <div class="fg full"><label class="fl">¿Es jefatura?</label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px"><input type="checkbox" id="pJef" style="width:16px;height:16px;accent-color:var(--ink)"> Sí, tiene permisos de jefatura</label>
       </div>
-      <div id="asignList" style="display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto"></div>
-    </div>
-    <div class="mf">
-      <button class="btn bg" onclick="cm('mAsignar')">Cerrar</button>
-      <button class="btn br" id="btnSaveAs" onclick="saveAsignaciones()">Guardar</button>
     </div>
   </div>
-</div>
+  <div class="mf"><button class="btn bg" onclick="cm('mAddProf')">Cancelar</button><button class="btn br" id="btnSaveP" onclick="saveProf()">Añadir</button></div>
+</div></div>
 
-<!-- MODAL: SELECT USER -->
-<div class="ov" id="mUser">
-  <div class="modal" style="max-width:340px">
-    <div class="mhd"><div class="mhd-t">¿Quién eres?</div><button class="mx" onclick="cm('mUser')">×</button></div>
-    <div class="mb">
-      <p style="font-size:12px;color:var(--muted);margin-bottom:13px">Selecciona tu nombre. Queda guardado en este dispositivo.</p>
-      <div id="userPick"></div>
-    </div>
+<div class="ov" id="mAsignar"><div class="modal" style="max-width:500px">
+  <div class="mhd"><div class="mhd-t">Asignar profesores a tramo</div><button class="mx" onclick="cm('mAsignar')">×</button></div>
+  <div class="mb">
+    <div class="g2"><div class="fg"><label class="fl">Día</label><select class="fc" id="asDia" onchange="renderAsignList()"><option>Lunes</option><option>Martes</option><option>Miércoles</option><option>Jueves</option><option>Viernes</option></select></div>
+    <div class="fg"><label class="fl">Tramo</label><select class="fc" id="asSlot" onchange="renderAsignList()"></select></div></div>
+    <div id="asignList" style="display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto"></div>
   </div>
-</div>
+  <div class="mf"><button class="btn bg" onclick="cm('mAsignar')">Cerrar</button><button class="btn br" onclick="saveAsignaciones()">Guardar</button></div>
+</div></div>
 
-<!-- MODAL: SUBIR PDF A GUARDIA EXISTENTE -->
-<div class="ov" id="mPdf">
-  <div class="modal" style="max-width:420px">
-    <div class="mhd"><div class="mhd-t">PDF de tarea</div><button class="mx" onclick="cm('mPdf')">×</button></div>
-    <div class="mb">
-      <div class="fg" style="margin-bottom:14px">
-        <label class="fl">PDF con la tarea para los alumnos</label>
-        <div class="pdfzone" id="mPdfZone" onclick="document.getElementById('mPdfFile').click()"
-          ondragover="event.preventDefault();this.style.borderColor='var(--gold)'"
-          ondragleave="this.style.borderColor=''"
-          ondrop="handlePdfDrop(event,'m')">
-          📎 Arrastra un PDF o haz clic para seleccionar
-        </div>
-        <input type="file" id="mPdfFile" accept=".pdf" style="display:none" onchange="handlePdfSelect(this,'m')">
-      </div>
-      <div id="mPdfCurrent"></div>
-    </div>
-    <div class="mf">
-      <button class="btn bg" onclick="cm('mPdf')">Cancelar</button>
-      <button class="btn br" id="btnSavePdf" onclick="savePdf()">Guardar PDF</button>
-    </div>
+<div class="ov" id="mAddAula"><div class="modal" style="max-width:400px">
+  <div class="mhd"><div class="mhd-t">Añadir Aula</div><button class="mx" onclick="cm('mAddAula')">×</button></div>
+  <div class="mb">
+    <div class="fg"><label class="fl">Nombre</label><input class="fc" id="aulaNom" placeholder="Aula 12, Laboratorio..."></div>
+    <div class="g2"><div class="fg"><label class="fl">Capacidad</label><input class="fc" type="number" id="aulaCap" placeholder="30"></div><div class="fg"><label class="fl">Descripción</label><input class="fc" id="aulaDesc" placeholder="Opcional"></div></div>
   </div>
-</div>
+  <div class="mf"><button class="btn bg" onclick="cm('mAddAula')">Cancelar</button><button class="btn br" onclick="saveAula()">Añadir</button></div>
+</div></div>
+
+<div class="ov" id="mReservar"><div class="modal" style="max-width:420px">
+  <div class="mhd"><div class="mhd-t">Reservar Aula</div><button class="mx" onclick="cm('mReservar')">×</button></div>
+  <div class="mb">
+    <div style="background:var(--paper2);border-radius:6px;padding:12px;margin-bottom:14px;font-size:13px">🏫 <strong id="resAulaNom">—</strong><br><span style="font-size:12px;color:var(--muted)" id="resAulaInfo"></span></div>
+    <div class="g2"><div class="fg"><label class="fl">Fecha</label><input class="fc" type="date" id="resFecha"></div><div class="fg"><label class="fl">Tramo</label><select class="fc" id="resSlot"></select></div></div>
+    <div class="fg"><label class="fl">Motivo</label><input class="fc" id="resMotivo" placeholder="Reunión de departamento..."></div>
+  </div>
+  <div class="mf"><button class="btn bg" onclick="cm('mReservar')">Cancelar</button><button class="btn br" onclick="saveReserva()">Reservar</button></div>
+</div></div>
+
+<div class="ov" id="mPdf"><div class="modal" style="max-width:420px">
+  <div class="mhd"><div class="mhd-t">PDF de tarea</div><button class="mx" onclick="cm('mPdf')">×</button></div>
+  <div class="mb">
+    <div class="pdfzone" id="mPdfZone" onclick="document.getElementById('mPdfFile').click()" ondragover="event.preventDefault()" ondrop="handlePdfDrop(event,'m')">📎 Arrastra un PDF o haz clic</div>
+    <input type="file" id="mPdfFile" accept=".pdf" style="display:none" onchange="handlePdfSel(this,'m')">
+    <div id="mPdfCurrent" style="margin-top:10px"></div>
+  </div>
+  <div class="mf"><button class="btn bg" onclick="cm('mPdf')">Cancelar</button><button class="btn br" id="btnSavePdf" onclick="savePdf()">Guardar PDF</button></div>
+</div></div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const SUPA_URL='https://lcqncxfaktgguqrvigxo.supabase.co';
-const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjcW5jeGZha3RnZ3VxcnZpZ3hvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxNzQxMzAsImV4cCI6MjA4ODc1MDEzMH0.jem1x4AjEJPtLpyOrcqbxIk77IlDwxt_EItWIcmZw0w';
-const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
-
-const SLOTS=[
-  {n:1,hora:'08:15–09:10',label:'1ª hora',recreo:false},
-  {n:2,hora:'09:10–10:05',label:'2ª hora',recreo:false},
-  {n:3,hora:'10:05–10:20',label:'1er Recreo',recreo:true},
-  {n:4,hora:'10:20–11:15',label:'3ª hora',recreo:false},
-  {n:5,hora:'11:15–12:10',label:'4ª hora',recreo:false},
-  {n:6,hora:'12:10–12:25',label:'2º Recreo',recreo:true},
-  {n:7,hora:'12:25–13:20',label:'5ª hora',recreo:false},
-  {n:8,hora:'13:20–14:15',label:'6ª hora',recreo:false},
-];
+const SURL='https://lcqncxfaktgguqrvigxo.supabase.co';
+const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjcW5jeGZha3RnZ3VxcnZpZ3hvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxNzQxMzAsImV4cCI6MjA4ODc1MDEzMH0.jem1x4AjEJPtLpyOrcqbxIk77IlDwxt_EItWIcmZw0w';
+const sb=supabase.createClient(SURL,SKEY);
+const SLOTS=[{n:1,hora:'08:15-09:10',label:'1ª hora',recreo:false},{n:2,hora:'09:10-10:05',label:'2ª hora',recreo:false},{n:3,hora:'10:05-10:20',label:'1er Recreo',recreo:true},{n:4,hora:'10:20-11:15',label:'3ª hora',recreo:false},{n:5,hora:'11:15-12:10',label:'4ª hora',recreo:false},{n:6,hora:'12:10-12:25',label:'2º Recreo',recreo:true},{n:7,hora:'12:25-13:20',label:'5ª hora',recreo:false},{n:8,hora:'13:20-14:15',label:'6ª hora',recreo:false}];
 const DIAS=['Lunes','Martes','Miércoles','Jueves','Viernes'];
-const PALETTE=['#2d4166','#c0392b','#1e8449','#7d3c98','#ca6f1e','#117a65','#943126','#1a5276','#784212','#1a6b3c'];
-
-// STATE
-let profs=[], guardias=[], coberturas=[], asignaciones=[];
-let currentWeekStart=null; // Monday of current week
-let currentDayIdx=0;       // 0=Mon … 4=Fri
-let activeUser=null;
-let misViewAll=false;
-const savedUserId=parseInt(localStorage.getItem('guardias_user_id'));
-
-// PDF state
-let pendingPdfFile=null;    // file selected for new guardia
-let pdfTargetGuardiaId=null;// guardia id for modal pdf upload
-
-// ── DATES ────────────────────────────────────────
-function getMondayOf(date){
-  const d=new Date(date);
-  const day=d.getDay()||7;
-  d.setDate(d.getDate()-day+1);
-  d.setHours(0,0,0,0);
-  return d;
-}
-function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
-function fmtDate(d){return d.toISOString().split('T')[0];}
-function fmtDateES(d){return d.toLocaleDateString('es-ES',{day:'2-digit',month:'short'});}
-function fmtDateLong(d){return d.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});}
-function dayName(d){return['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'][d.getDay()];}
-function isToday(d){return fmtDate(d)===fmtDate(new Date());}
-
-// ── SYNC ─────────────────────────────────────────
-function syncOk(){const d=document.getElementById('syncDot');d.className='sync-dot ok';d.title='Conectado';}
-function syncErr(){const d=document.getElementById('syncDot');d.className='sync-dot err';d.title='Error';}
-function syncLoad(){const d=document.getElementById('syncDot');d.className='sync-dot loading';}
-
-// ── LOAD ─────────────────────────────────────────
+const PAL=['#2d4166','#c0392b','#1e8449','#7d3c98','#ca6f1e','#117a65','#943126','#1a5276','#784212','#1a6b3c'];
+let profs=[],guardias=[],coberturas=[],asignaciones=[],horarios_prof=[],aulas=[],reservas=[];
+let activeUser=null,currentWeekStart=null,currentDayIdx=0,aulasWeekStart=null,aulasDayIdx=0;
+let misViewAll=false,pendingPdf=null,pdfGid=null,numTramos=1,resAulaId=null;
+let csvR={H:[],P:[],A:[],HP:[]};
+async function hashPass(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p+'IES_molina_salt'));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+function getMon(d){const r=new Date(d),day=r.getDay()||7;r.setDate(r.getDate()-day+1);r.setHours(0,0,0,0);return r;}
+function addD(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
+function fmt(d){return d.toISOString().split('T')[0];}
+function fmtES(d){return d.toLocaleDateString('es-ES',{day:'2-digit',month:'short'});}
+function fmtLong(d){return d.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});}
+function dayNm(d){return['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'][d.getDay()];}
+function isToday(d){return fmt(d)===fmt(new Date());}
+function syncOk(){document.getElementById('syncDot').className='sync-dot ok';}
+function syncErr(){document.getElementById('syncDot').className='sync-dot err';}
+function syncLoad(){document.getElementById('syncDot').className='sync-dot loading';}
 async function loadAll(){
   syncLoad();
   try{
-    const[rP,rG,rC,rA]=await Promise.all([
-      sb.from('profesores').select('*').order('nombre'),
-      sb.from('guardias').select('*').order('fecha'),
-      sb.from('coberturas').select('*').order('id'),
-      sb.from('asignaciones').select('*').order('id'),
+    const[rP,rG,rC,rA,rH,rAu,rR]=await Promise.all([
+      sb.from('profesores').select('*').order('nombre'),sb.from('guardias').select('*').order('fecha'),
+      sb.from('coberturas').select('*').order('id'),sb.from('asignaciones').select('*').order('id'),
+      sb.from('horarios_prof').select('*').order('id'),sb.from('aulas').select('*').order('nombre'),
+      sb.from('reservas').select('*').order('id'),
     ]);
-    if(rP.error||rG.error||rC.error||rA.error) throw rP.error||rG.error||rC.error||rA.error;
-    profs=rP.data||[]; guardias=rG.data||[]; coberturas=rC.data||[]; asignaciones=rA.data||[];
-    if(savedUserId&&!activeUser){const u=profs.find(p=>p.id===savedUserId);if(u)setUserLocal(u);}
-    syncOk();
-    document.getElementById('loadingScreen').classList.add('hide');
-    renderCurrent();
+    profs=rP.data||[];guardias=rG.data||[];coberturas=rC.data||[];asignaciones=rA.data||[];
+    horarios_prof=rH.data||[];aulas=rAu.data||[];reservas=rR.data||[];
+    syncOk();document.getElementById('loadingScreen').classList.add('hide');
+    populateLoginSelects();renderCurrent();
   }catch(e){syncErr();document.getElementById('loadingScreen').classList.add('hide');showToast('Error: '+e.message);}
 }
-
-function setupRealtime(){
+function setupRT(){
   sb.channel('all')
     .on('postgres_changes',{event:'*',schema:'public',table:'profesores'},()=>loadAll())
     .on('postgres_changes',{event:'*',schema:'public',table:'guardias'},()=>loadAll())
     .on('postgres_changes',{event:'*',schema:'public',table:'coberturas'},()=>loadAll())
     .on('postgres_changes',{event:'*',schema:'public',table:'asignaciones'},()=>loadAll())
-    .subscribe(s=>{
-      if(s==='SUBSCRIBED') syncOk();
-      if(s==='CLOSED'||s==='CHANNEL_ERROR'){syncErr();if(!window._pt)window._pt=setInterval(loadAll,8000);}
-    });
+    .on('postgres_changes',{event:'*',schema:'public',table:'horarios_prof'},()=>loadAll())
+    .on('postgres_changes',{event:'*',schema:'public',table:'aulas'},()=>loadAll())
+    .on('postgres_changes',{event:'*',schema:'public',table:'reservas'},()=>loadAll())
+    .subscribe(s=>{if(s==='SUBSCRIBED')syncOk();if(s==='CLOSED'||s==='CHANNEL_ERROR'){syncErr();if(!window._pt)window._pt=setInterval(loadAll,8000);}});
 }
-
 function renderCurrent(){
-  const a=document.querySelector('.page.on');
-  if(!a) return;
+  const a=document.querySelector('.page.on');if(!a)return;
   const id=a.id.replace('pg-','');
-  if(id==='horario') renderSch();
-  if(id==='mis')     renderMis();
-  if(id==='profs')   renderProfs();
+  if(id==='horario')renderSch();if(id==='mis')renderMis();if(id==='mihorario')renderMiHorario();
+  if(id==='aulas')renderAulas();if(id==='profs')renderProfs();
+  updateJefUI();
 }
-
-// ── NAVIGATION ───────────────────────────────────
-function goTo(id,btn){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
-  document.getElementById('pg-'+id).classList.add('on');
-  if(btn) btn.classList.add('on');
-  if(id==='horario') renderSch();
-  if(id==='mis')     renderMis();
-  if(id==='profs')   renderProfs();
+function updateJefUI(){
+  const j=activeUser?.es_jefatura;
+  ['btnAsignar','btnNuevaAus','btnAddProf','btnAddAula'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display=j?'':'none';});
 }
-
-// ── WEEK NAVIGATION ──────────────────────────────
-function changeWeek(delta){
-  currentWeekStart=addDays(currentWeekStart,delta*7);
-  renderSch();
+// LOGIN
+function showV(id){['vLogin','vReg','vSetup'].forEach(v=>document.getElementById(v).style.display=v===id?'':'none');}
+function populateLoginSelects(){
+  const opts=profs.map(p=>`<option value="${p.id}">${p.nombre}</option>`).join('');
+  const unreg=profs.filter(p=>!p.registrado).map(p=>`<option value="${p.id}">${p.nombre}</option>`).join('');
+  document.getElementById('loginNombre').innerHTML='<option value="">— Selecciona —</option>'+opts;
+  document.getElementById('regNombre').innerHTML='<option value="">— Selecciona —</option>'+unreg;
+  const hasJef=profs.some(p=>p.es_jefatura&&p.registrado);
+  document.getElementById('setupBtn').style.display=hasJef?'none':'block';
 }
-function goToday(){
-  currentWeekStart=getMondayOf(new Date());
-  // set currentDayIdx to today if it's a weekday
-  const dow=new Date().getDay();
-  if(dow>=1&&dow<=5) currentDayIdx=dow-1;
-  renderSch();
+async function doLogin(){
+  const id=parseInt(document.getElementById('loginNombre').value);
+  const pass=document.getElementById('loginPass').value;
+  const err=document.getElementById('loginErr');
+  if(!id||!pass){err.textContent='Rellena todos los campos';err.style.display='block';return;}
+  const prof=profs.find(p=>p.id===id);
+  if(!prof){err.textContent='Profesor no encontrado';err.style.display='block';return;}
+  if(!prof.registrado){err.textContent='Aún no has creado tu contraseña. Usa Registrarse.';err.style.display='block';return;}
+  const h=await hashPass(pass);
+  if(h!==prof.password_hash){err.textContent='Contraseña incorrecta';err.style.display='block';return;}
+  err.style.display='none';setActiveUser(prof);document.getElementById('loginScreen').classList.add('hide');
+  showToast('Bienvenido/a, '+prof.nombre.split(' ')[0]+'!');
 }
-
-// ── SCHEDULE RENDER ──────────────────────────────
+async function doRegister(){
+  const id=parseInt(document.getElementById('regNombre').value);
+  const p1=document.getElementById('regPass1').value,p2=document.getElementById('regPass2').value;
+  const err=document.getElementById('regErr');
+  if(!id||!p1||!p2){err.textContent='Rellena todos los campos';err.style.display='block';return;}
+  if(p1.length<4){err.textContent='Mínimo 4 caracteres';err.style.display='block';return;}
+  if(p1!==p2){err.textContent='Las contraseñas no coinciden';err.style.display='block';return;}
+  if(profs.find(p=>p.id===id)?.registrado){err.textContent='Este profesor ya tiene cuenta';err.style.display='block';return;}
+  const btn=document.getElementById('btnReg');btn.disabled=true;btn.textContent='Guardando…';
+  const h=await hashPass(p1);
+  const{error}=await sb.from('profesores').update({password_hash:h,registrado:true}).eq('id',id);
+  btn.disabled=false;btn.textContent='Crear cuenta';
+  if(error){err.textContent='Error: '+error.message;err.style.display='block';return;}
+  err.style.display='none';await loadAll();
+  const u=profs.find(p=>p.id===id);setActiveUser(u);
+  document.getElementById('loginScreen').classList.add('hide');showToast('Cuenta creada. ¡Bienvenido/a!');
+}
+async function doSetup(){
+  const nombre=document.getElementById('setupNom').value.trim();
+  const dep=document.getElementById('setupDep').value.trim()||'Jefatura de Estudios';
+  const p1=document.getElementById('setupPass1').value,p2=document.getElementById('setupPass2').value;
+  const err=document.getElementById('setupErr');
+  if(!nombre||!p1||!p2){err.textContent='Rellena todos los campos';err.style.display='block';return;}
+  if(p1.length<4){err.textContent='Mínimo 4 caracteres';err.style.display='block';return;}
+  if(p1!==p2){err.textContent='Las contraseñas no coinciden';err.style.display='block';return;}
+  if(profs.some(p=>p.es_jefatura&&p.registrado)){err.textContent='Ya existe una cuenta de jefatura';err.style.display='block';return;}
+  const btn=document.getElementById('btnSetup');btn.disabled=true;btn.textContent='Creando…';
+  const h=await hashPass(p1);
+  const{data,error}=await sb.from('profesores').insert({nombre,departamento:dep,color:'#2d4166',es_jefatura:true,registrado:true,password_hash:h}).select().single();
+  btn.disabled=false;btn.textContent='Crear cuenta de jefatura';
+  if(error){err.textContent='Error: '+error.message;err.style.display='block';return;}
+  err.style.display='none';await loadAll();setActiveUser(data);
+  document.getElementById('loginScreen').classList.add('hide');showToast('¡Cuenta de jefatura creada!');
+}
+function setActiveUser(u){
+  activeUser=u;localStorage.setItem('guardias_user_id',u.id);
+  document.getElementById('hAv').textContent=ini(u.nombre);document.getElementById('hAv').style.background=u.color;
+  document.getElementById('hName').textContent=u.nombre.split(' ')[0];updateJefUI();
+}
+function logout(){activeUser=null;localStorage.removeItem('guardias_user_id');document.getElementById('hAv').textContent='?';document.getElementById('hAv').style.background='var(--gold)';document.getElementById('hName').textContent='—';document.getElementById('loginPass').value='';document.getElementById('loginErr').style.display='none';document.getElementById('loginScreen').classList.remove('hide');}
+async function tryAutoLogin(){const sid=parseInt(localStorage.getItem('guardias_user_id'));if(sid&&profs.length){const u=profs.find(p=>p.id===sid);if(u&&u.registrado){setActiveUser(u);document.getElementById('loginScreen').classList.add('hide');}}}
+// NAV
+function goTo(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));document.getElementById('pg-'+id).classList.add('on');if(btn)btn.classList.add('on');if(id==='horario')renderSch();if(id==='mis')renderMis();if(id==='mihorario')renderMiHorario();if(id==='aulas')renderAulas();if(id==='profs')renderProfs();}
+function changeWeek(d){currentWeekStart=addD(currentWeekStart,d*7);renderSch();}
+function goToday(){currentWeekStart=getMon(new Date());const dow=new Date().getDay();if(dow>=1&&dow<=5)currentDayIdx=dow-1;renderSch();}
+function changeWeekAulas(d){aulasWeekStart=addD(aulasWeekStart,d*7);renderAulas();}
+function goTodayAulas(){aulasWeekStart=getMon(new Date());const dow=new Date().getDay();if(dow>=1&&dow<=5)aulasDayIdx=dow-1;renderAulas();}
+// SCHEDULE
 function renderSch(){
-  if(!currentWeekStart) return;
+  if(!currentWeekStart)return;
   const mon=currentWeekStart;
-  const fri=addDays(mon,4);
-  const lbl=`Semana del ${fmtDateES(mon)} al ${fmtDateES(fri)}`;
-  document.getElementById('weekLbl').textContent=lbl;
-  document.getElementById('schWeekLbl').textContent=lbl;
-
-  // Day buttons
-  const dbar=document.getElementById('dbar');
-  dbar.innerHTML='';
-  for(let i=0;i<5;i++){
-    const d=addDays(mon,i);
-    const iso=fmtDate(d);
-    const hasG=guardias.some(g=>g.fecha===iso);
-    const btn=document.createElement('button');
+  document.getElementById('weekLbl').textContent='Semana del '+fmtES(mon)+' al '+fmtES(addD(mon,4));
+  document.getElementById('schWeekLbl').textContent=document.getElementById('weekLbl').textContent;
+  const dbar=document.getElementById('dbar');dbar.innerHTML='';
+  for(let i=0;i<5;i++){const d=addD(mon,i);const btn=document.createElement('button');
     btn.className='db'+(i===currentDayIdx?' on':'')+(isToday(d)?' hoy':'');
-    btn.innerHTML=`${DIAS[i]}<span class="db-date">${fmtDateES(d)}${hasG?' 📋':''}</span>`;
-    btn.onclick=(()=>{const idx=i;return()=>{currentDayIdx=idx;document.querySelectorAll('.db').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderSchTable();}})();
-    dbar.appendChild(btn);
-  }
+    btn.innerHTML=DIAS[i]+'<span class="db-date">'+fmtES(d)+(guardias.some(g=>g.fecha===fmt(d))?' 📋':'')+'</span>';
+    const idx=i;btn.onclick=()=>{currentDayIdx=idx;document.querySelectorAll('#dbar .db').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderSchTable();};
+    dbar.appendChild(btn);}
   renderSchTable();
 }
-
 function renderSchTable(){
-  const d=addDays(currentWeekStart,currentDayIdx);
-  const iso=fmtDate(d);
-  const diaNom=dayName(d);
-  const tbody=document.getElementById('schBody');
-  tbody.innerHTML='';
-
+  const d=addD(currentWeekStart,currentDayIdx),iso=fmt(d),tbody=document.getElementById('schBody');tbody.innerHTML='';
   SLOTS.forEach(sl=>{
-    const tr=document.createElement('tr');
-    if(sl.recreo) tr.classList.add('rec');
+    const tr=document.createElement('tr');if(sl.recreo)tr.classList.add('rec');
     const gs=guardias.filter(g=>g.fecha===iso&&g.slot_n===sl.n);
-    let gCell='',tCell='',pCell='',eCell='';
-
-    if(sl.recreo){
-      gCell='<span class="badge bgrey">Recreo</span>';
-      eCell='<span class="badge bgrey">Recreo</span>';
-    } else {
-      if(gs.length){
-        gs.forEach(g=>{
-          const ausente=profs.find(p=>p.id===g.ausente_id);
-          const cobs=coberturas.filter(c=>c.guardia_id===g.id);
-          gCell+=`<div class="gcard" style="border-left:3px solid ${ausente?.color||'#ccc'}">
-            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
-              <div>
-                <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
-                  <div style="width:9px;height:9px;border-radius:50%;background:${ausente?.color||'#aaa'};flex-shrink:0"></div>
-                  <span class="ausente-name">${ausente?.nombre||'?'}</span>
-                  <span style="font-size:10px;color:var(--muted)">(ausente)</span>
-                </div>
-                <div class="row" style="gap:5px">
-                  <span class="curso-badge">${g.curso||'—'}</span>
-                  <span class="aula-tag">📍 ${g.aula||'—'}</span>
-                </div>
-              </div>
-              <button class="btn bg xs" onclick="delGuardia(${g.id})">×</button>
-            </div>
-          </div>`;
-          tCell+=`<div style="margin-bottom:6px">`;
-          tCell+=g.tarea?`<div class="tarea-txt">📝 ${g.tarea}</div>`:'<span style="font-size:12px;color:var(--muted);font-style:italic">Sin tarea</span>';
-          tCell+=g.pdf_url
-            ?`<div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">
-                <a href="${g.pdf_url}" target="_blank" class="btn bblue xs">📄 Ver PDF</a>
-                <button class="btn bg xs" onclick="openPdfModal(${g.id},'${g.pdf_url}')">↑ PDF</button>
-              </div>`
-            :`<div style="margin-top:5px"><button class="btn bg xs" onclick="openPdfModal(${g.id},'')">📎 Subir PDF</button></div>`;
-          tCell+='</div>';
-          let chips='<div class="chips-row">';
-          if(cobs.length){
-            cobs.forEach(c=>{
-              const p=profs.find(x=>x.id===c.profesor_id);
-              const ts=(c.tramos||[]).map(t=>t.tipo).join(', ');
-              chips+=`<div class="chip"><div class="chip-dot" style="background:${p?.color||'#aaa'}"></div>
-                <span>${shortName(p?.nombre||'?')}</span>
-                ${ts?`<span style="font-size:10px;color:var(--muted)">${ts}</span>`:''}
-                <button class="chip-rm" onclick="delCobertura(${c.id})">×</button></div>`;
-            });
-          } else {
-            chips+='<span class="unassigned">Nadie aún</span>';
-          }
-          chips+=`<button class="add-chip" onclick="openAssignSelf('${iso}',${g.id})" title="Apuntarme">+</button></div>`;
-          pCell+=chips;
-          eCell+=cobs.length?`<span class="badge bok">✓ Cubierta</span><br>`:`<span class="badge bwarn">⚠ Sin cubrir</span><br>`;
-        });
-      } else {
-        eCell='<span class="badge bgrey">Libre</span>';
-      }
-      gCell+=`<button class="add-gslot" onclick="openAddGuardiaFor('${iso}',${sl.n})">${gs.length?'+ Otra ausencia':'+ Añadir ausencia'}</button>`;
+    let gC='',tC='',pC='',eC='';
+    if(sl.recreo){gC='<span class="badge bgrey">Recreo</span>';eC='<span class="badge bgrey">Recreo</span>';}
+    else{
+      gs.forEach(g=>{
+        const aus=profs.find(p=>p.id===g.ausente_id);const cobs=coberturas.filter(c=>c.guardia_id===g.id);
+        const diaNom=dayNm(d);const profAs=asignaciones.filter(a=>a.dia===diaNom&&a.slot_n===sl.n).map(a=>profs.find(p=>p.id===a.profesor_id)).filter(Boolean);
+        gC+=`<div class="gcard" style="border-left:3px solid ${aus?.color||'#ccc'}"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px"><div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><div style="width:9px;height:9px;border-radius:50%;background:${aus?.color||'#aaa'};flex-shrink:0"></div><span style="font-size:13px;font-weight:600">${aus?.nombre||'?'}</span><span style="font-size:10px;color:var(--muted)">(ausente)</span></div>
+          <div class="row" style="gap:5px"><span class="curso-badge">${g.curso||'—'}</span><span style="font-size:12px;color:var(--muted)">📍 ${g.aula||'—'}</span></div>
+          ${profAs.length?`<div style="font-size:10px;color:var(--muted);margin-top:4px">De guardia: ${profAs.map(p=>`<span style="color:${p.color};font-weight:600">${p.nombre.split(' ')[0]}</span>`).join(', ')}</div>`:''}
+        </div>${activeUser?.es_jefatura?`<button class="btn bg xs" onclick="delGuardia(${g.id})">×</button>`:''}</div></div>`;
+        tC+=`<div style="margin-bottom:6px">${g.tarea?`<div class="tarea-txt">📝 ${g.tarea}</div>`:'<span style="font-size:12px;color:var(--muted);font-style:italic">Sin tarea</span>'}
+          ${g.pdf_url?`<div style="margin-top:5px;display:flex;gap:5px"><a href="${g.pdf_url}" target="_blank" class="btn bblue xs">📄 PDF</a><button class="btn bg xs" onclick="openPdfModal(${g.id},'${g.pdf_url}')">↑</button></div>`:`<div style="margin-top:5px"><button class="btn bg xs" onclick="openPdfModal(${g.id},'')">📎 Subir PDF</button></div>`}</div>`;
+        let chips='<div class="chips-row">';
+        if(cobs.length)cobs.forEach(c=>{const p=profs.find(x=>x.id===c.profesor_id);chips+=`<div class="chip"><div class="chip-dot" style="background:${p?.color||'#aaa'}"></div><span>${shortN(p?.nombre||'?')}</span><span style="font-size:10px;color:var(--muted)">${c.num_tramos||1}t</span>${activeUser?.id===c.profesor_id||activeUser?.es_jefatura?`<button class="chip-rm" onclick="delCobertura(${c.id})">×</button>`:''}</div>`;});
+        else chips+='<span style="font-size:12px;color:var(--muted);font-style:italic">Nadie aún</span>';
+        chips+=`<button class="add-chip" onclick="openAssignSelf('${iso}',${g.id})">+</button></div>`;
+        pC+=chips;eC+=cobs.length?'<span class="badge bok">✓ Cubierta</span><br>':'<span class="badge bwarn">⚠ Sin cubrir</span><br>';
+      });
+      gC+=activeUser?.es_jefatura?`<button class="add-gslot" onclick="openAddGuardiaFor('${iso}',${sl.n})">${gs.length?'+ Otra ausencia':'+ Añadir ausencia'}</button>`:(gs.length===0?'<span style="font-size:12px;color:var(--muted)">—</span>':'');
+      if(gs.length===0)eC='<span class="badge bgrey">Libre</span>';
     }
-
-    tr.innerHTML=`
-      <td><div class="sn">Tramo ${sl.n}</div><div class="st">${sl.hora}</div><div style="font-size:10px;color:var(--muted)">${sl.label}</div></td>
-      <td>${gCell}</td><td>${tCell}</td><td>${pCell}</td><td>${eCell}</td>`;
+    tr.innerHTML=`<td><div class="sn">Tramo ${sl.n}</div><div class="st">${sl.hora}</div><div style="font-size:10px;color:var(--muted)">${sl.label}</div></td><td>${gC}</td><td>${tC}</td><td>${pC}</td><td>${eC}</td>`;
     tbody.appendChild(tr);
   });
 }
-
-// ── GUARDIA CRUD ─────────────────────────────────
-function openAddGuardia(){
-  const iso=fmtDate(addDays(currentWeekStart,currentDayIdx));
-  document.getElementById('gFecha').value=iso;
-  populateSlotSelect(); populateAusenteSelect();
-  pendingPdfFile=null;
-  resetPdfZone('g');
-  openModal('mGuardia');
-}
-function openAddGuardiaFor(iso,slotN){
-  document.getElementById('gFecha').value=iso;
-  populateSlotSelect(); populateAusenteSelect();
-  document.getElementById('gSlot').value=slotN;
-  pendingPdfFile=null; resetPdfZone('g');
-  openModal('mGuardia');
-}
-function populateSlotSelect(){
-  document.getElementById('gSlot').innerHTML=SLOTS.filter(s=>!s.recreo).map(s=>`<option value="${s.n}">Tramo ${s.n} — ${s.hora}</option>`).join('');
-}
-function populateAusenteSelect(){
-  document.getElementById('gAusente').innerHTML=profs.map(p=>`<option value="${p.id}">${p.nombre}</option>`).join('');
-}
-
+// GUARDIA CRUD
+function openAddGuardia(){document.getElementById('gFecha').value=fmt(addD(currentWeekStart,currentDayIdx));document.getElementById('gSlot').innerHTML=SLOTS.filter(s=>!s.recreo).map(s=>`<option value="${s.n}">Tramo ${s.n} — ${s.hora}</option>`).join('');document.getElementById('gAusente').innerHTML=profs.map(p=>`<option value="${p.id}">${p.nombre}</option>`).join('');pendingPdf=null;resetPZ('g');openModal('mGuardia');}
+function openAddGuardiaFor(iso,sn){openAddGuardia();document.getElementById('gFecha').value=iso;document.getElementById('gSlot').value=sn;}
 async function saveGuardia(){
-  const btn=document.getElementById('btnSaveG');
-  btn.disabled=true; btn.textContent='Guardando…';
-  const fecha=document.getElementById('gFecha').value;
-  if(!fecha){showToast('Selecciona una fecha');btn.disabled=false;btn.textContent='Guardar';return;}
-  const payload={
-    fecha, slot_n:parseInt(document.getElementById('gSlot').value),
-    ausente_id:parseInt(document.getElementById('gAusente').value),
-    curso:document.getElementById('gCurso').value.trim()||'—',
-    aula:document.getElementById('gAula').value.trim()||'—',
-    motivo:document.getElementById('gMotivo').value.trim(),
-    tarea:document.getElementById('gTarea').value.trim(),
-    pdf_url:'',
-  };
-  const {data,error}=await sb.from('guardias').insert(payload).select().single();
+  const btn=document.getElementById('btnSaveG');btn.disabled=true;btn.textContent='Guardando…';
+  const fecha=document.getElementById('gFecha').value;if(!fecha){showToast('Selecciona fecha');btn.disabled=false;btn.textContent='Guardar';return;}
+  const{data,error}=await sb.from('guardias').insert({fecha,slot_n:parseInt(document.getElementById('gSlot').value),ausente_id:parseInt(document.getElementById('gAusente').value),curso:document.getElementById('gCurso').value.trim()||'—',aula:document.getElementById('gAula').value.trim()||'—',motivo:document.getElementById('gMotivo').value.trim(),tarea:document.getElementById('gTarea').value.trim(),pdf_url:''}).select().single();
   if(error){showToast('Error: '+error.message);btn.disabled=false;btn.textContent='Guardar';return;}
-  // Upload PDF if selected
-  if(pendingPdfFile&&data){
-    const url=await uploadPdf(pendingPdfFile,data.id);
-    if(url) await sb.from('guardias').update({pdf_url:url}).eq('id',data.id);
-  }
-  ['gCurso','gAula','gMotivo','gTarea'].forEach(id=>document.getElementById(id).value='');
-  pendingPdfFile=null; resetPdfZone('g');
-  btn.disabled=false; btn.textContent='Guardar';
-  cm('mGuardia'); showToast('Ausencia registrada ✓');
+  if(pendingPdf&&data){const url=await uploadPdf(pendingPdf,data.id);if(url)await sb.from('guardias').update({pdf_url:url}).eq('id',data.id);}
+  ['gCurso','gAula','gMotivo','gTarea'].forEach(id=>document.getElementById(id).value='');pendingPdf=null;resetPZ('g');btn.disabled=false;btn.textContent='Guardar';cm('mGuardia');showToast('Ausencia registrada ✓');
 }
-
-async function delGuardia(id){
-  if(!confirm('¿Eliminar esta guardia?')) return;
-  await sb.from('guardias').delete().eq('id',id);
-  showToast('Guardia eliminada');
+async function delGuardia(id){if(!confirm('¿Eliminar?'))return;await sb.from('guardias').delete().eq('id',id);showToast('Eliminada');}
+async function delCobertura(id){await sb.from('coberturas').delete().eq('id',id);showToast('Eliminado');}
+// PDF
+function handlePdfDrop(e,c){e.preventDefault();const f=e.dataTransfer.files[0];if(f&&f.type==='application/pdf')setPdf(f,c);}
+function handlePdfSel(inp,c){if(inp.files[0])setPdf(inp.files[0],c);}
+function setPdf(f,c){pendingPdf=f;const z=document.getElementById(c==='g'?'gPdfZone':'mPdfZone');z.textContent='✅ '+f.name;z.classList.add('has');}
+function resetPZ(c){const z=document.getElementById(c==='g'?'gPdfZone':'mPdfZone');if(z){z.textContent='📎 Arrastra un PDF o haz clic';z.classList.remove('has');}}
+async function uploadPdf(file,gid){const path=`g_${gid}_${Date.now()}.pdf`;const{error}=await sb.storage.from('tareas').upload(path,file,{upsert:true});if(error){showToast('Error PDF: '+error.message);return null;}return sb.storage.from('tareas').getPublicUrl(path).data.publicUrl;}
+function openPdfModal(gid,cur){pdfGid=gid;pendingPdf=null;resetPZ('m');document.getElementById('mPdfFile').value='';document.getElementById('mPdfCurrent').innerHTML=cur?`<div style="background:var(--paper2);border:1px solid var(--line);border-radius:6px;padding:10px;font-size:12px;display:flex;align-items:center;justify-content:space-between"><span>📄 PDF actual</span><a href="${cur}" target="_blank" class="btn bblue xs">Ver</a></div>`:'';openModal('mPdf');}
+async function savePdf(){if(!pendingPdf){showToast('Selecciona un PDF');return;}const btn=document.getElementById('btnSavePdf');btn.disabled=true;btn.textContent='Subiendo…';const url=await uploadPdf(pendingPdf,pdfGid);if(url){await sb.from('guardias').update({pdf_url:url}).eq('id',pdfGid);cm('mPdf');showToast('PDF subido ✓');}btn.disabled=false;btn.textContent='Guardar PDF';pendingPdf=null;}
+// APUNTARME
+function setNumTramos(n,btn){numTramos=n;document.querySelectorAll('#tramosOpts .btn').forEach(b=>{b.classList.remove('br');b.classList.add('bg');});btn.classList.add('br');btn.classList.remove('bg');const cont=document.getElementById('aTramos');cont.innerHTML='';for(let i=1;i<=n;i++){const so=SLOTS.filter(s=>!s.recreo).map(s=>`<option value="${s.n}">${s.n}. ${s.hora}</option>`).join('');const div=document.createElement('div');div.className='tc';div.id='at'+i;div.innerHTML=`<div class="tc-hd"><span class="tc-l">Tramo ${i}</span></div><div class="g3"><div class="fg"><label class="fl">Período</label><select class="fc" id="at${i}s" onchange="autoH(${i})">${so}</select></div><div class="fg"><label class="fl">Inicio</label><input class="fc" type="time" id="at${i}i"></div><div class="fg"><label class="fl">Fin</label><input class="fc" type="time" id="at${i}f"></div></div><div class="fg"><label class="fl">Tipo</label><select class="fc" id="at${i}t"><option>Aula</option><option>Patio</option><option>Pasillo</option><option>Biblioteca</option><option>Despacho</option><option>Otro</option></select></div>`;cont.appendChild(div);autoH(i);}}
+function autoH(n){const sl=SLOTS.find(s=>s.n===parseInt(document.getElementById('at'+n+'s').value));if(!sl)return;const[i,f]=sl.hora.split('-');document.getElementById('at'+n+'i').value=i;document.getElementById('at'+n+'f').value=f;}
+function openAssignSelf(iso,gid){
+  const g=guardias.find(x=>x.id===gid),slN=g?g.slot_n:null,diaNom=iso?dayNm(new Date(iso+'T12:00:00')):null;
+  const asgd=slN&&diaNom?asignaciones.filter(a=>a.dia===diaNom&&a.slot_n===slN).map(a=>a.profesor_id):[];
+  const elig=asgd.length>0?profs.filter(p=>asgd.includes(p.id)):profs;
+  const srt=[...elig].map(p=>({...p,mins:calcMins(p.id)})).sort((a,b)=>a.mins-b.mins);
+  const sel=document.getElementById('aProfId');sel.innerHTML=srt.map(p=>`<option value="${p.id}">${p.nombre} (${fmtMins(p.mins)})</option>`).join('');
+  if(activeUser&&elig.find(p=>p.id===activeUser.id))sel.value=activeUser.id;else if(srt.length)sel.value=srt[0].id;
+  document.getElementById('aFecha').value=iso||fmt(addD(currentWeekStart,currentDayIdx));updateGuardiaSelect(gid);
+  numTramos=1;document.getElementById('aTramos').innerHTML='';
+  document.querySelectorAll('#tramosOpts .btn').forEach((b,i)=>{b.classList.remove('br');b.classList.add('bg');if(i===0){b.classList.add('br');b.classList.remove('bg');}});
+  setNumTramos(1,document.querySelector('#tramosOpts .btn'));openModal('mApuntar');
 }
-async function delCobertura(id){
-  await sb.from('coberturas').delete().eq('id',id);
-  showToast('Eliminado de la guardia');
-}
-
-// ── PDF ───────────────────────────────────────────
-function handlePdfDrop(e,ctx){
-  e.preventDefault();
-  const f=e.dataTransfer.files[0];
-  if(f&&f.type==='application/pdf') setPdfFile(f,ctx);
-}
-function handlePdfSelect(input,ctx){
-  if(input.files[0]) setPdfFile(input.files[0],ctx);
-}
-function setPdfFile(f,ctx){
-  if(ctx==='g'){
-    pendingPdfFile=f;
-    const z=document.getElementById('gPdfZone');
-    z.textContent='✅ '+f.name; z.classList.add('has');
-  } else if(ctx==='m'){
-    pendingPdfFile=f;
-    const z=document.getElementById('mPdfZone');
-    z.textContent='✅ '+f.name; z.classList.add('has');
-  }
-}
-function resetPdfZone(ctx){
-  const z=document.getElementById(ctx==='g'?'gPdfZone':'mPdfZone');
-  if(z){z.textContent='📎 Arrastra un PDF o haz clic para seleccionar';z.classList.remove('has');}
-}
-
-async function uploadPdf(file,guardiaId){
-  const ext=file.name.split('.').pop();
-  const path=`guardia_${guardiaId}_${Date.now()}.${ext}`;
-  const{error}=await sb.storage.from('tareas').upload(path,file,{upsert:true});
-  if(error){showToast('Error subiendo PDF: '+error.message);return null;}
-  const{data}=sb.storage.from('tareas').getPublicUrl(path);
-  return data.publicUrl;
-}
-
-function openPdfModal(guardiaId, currentUrl){
-  pdfTargetGuardiaId=guardiaId;
-  pendingPdfFile=null;
-  resetPdfZone('m');
-  document.getElementById('mPdfFile').value='';
-  const cur=document.getElementById('mPdfCurrent');
-  cur.innerHTML=currentUrl
-    ?`<div style="background:var(--paper2);border:1px solid var(--line);border-radius:6px;padding:10px;font-size:12px;display:flex;align-items:center;justify-content:space-between">
-        <span>📄 PDF actual</span>
-        <a href="${currentUrl}" target="_blank" class="btn bblue xs">Ver</a>
-      </div>`
-    :'';
-  openModal('mPdf');
-}
-
-async function savePdf(){
-  if(!pendingPdfFile){showToast('Selecciona un PDF primero');return;}
-  const btn=document.getElementById('btnSavePdf');
-  btn.disabled=true; btn.textContent='Subiendo…';
-  const url=await uploadPdf(pendingPdfFile,pdfTargetGuardiaId);
-  if(url){
-    await sb.from('guardias').update({pdf_url:url}).eq('id',pdfTargetGuardiaId);
-    cm('mPdf'); showToast('PDF subido ✓');
-  }
-  btn.disabled=false; btn.textContent='Guardar PDF';
-  pendingPdfFile=null;
-}
-
-// ── APUNTARME ────────────────────────────────────
-let nAt=0;
-function openAssignSelf(iso,guardiaId){
-  const g=guardias.find(x=>x.id===guardiaId);
-  const slotN=g?g.slot_n:null;
-  const diaNom=iso?dayName(new Date(iso+'T12:00:00')):null;
-  const assigned=slotN&&diaNom
-    ?asignaciones.filter(a=>a.dia===diaNom&&a.slot_n===slotN).map(a=>a.profesor_id)
-    :[];
-  const eligible=assigned.length>0?profs.filter(p=>assigned.includes(p.id)):profs;
-  const sorted=[...eligible].map(p=>({...p,mins:calcMins(p.id)})).sort((a,b)=>a.mins-b.mins);
-  const sel=document.getElementById('aProfId');
-  sel.innerHTML=sorted.map(p=>`<option value="${p.id}">${p.nombre} (${fmtMins(p.mins)})</option>`).join('');
-  if(activeUser&&eligible.find(p=>p.id===activeUser.id)) sel.value=activeUser.id;
-  else if(sorted.length) sel.value=sorted[0].id;
-  document.getElementById('aFecha').value=iso||fmtDate(addDays(currentWeekStart,currentDayIdx));
-  updateGuardiaSelect(guardiaId);
-  nAt=0; document.getElementById('aTramos').innerHTML=''; addATramo();
-  openModal('mApuntar');
-}
-
-function updateGuardiaSelect(preselect){
-  const fecha=document.getElementById('aFecha').value;
-  const gs=guardias.filter(g=>g.fecha===fecha);
-  const sel=document.getElementById('aGuardia');
-  sel.innerHTML=gs.length
-    ?gs.map(g=>{const a=profs.find(p=>p.id===g.ausente_id);return`<option value="${g.id}">${SLOTS.find(s=>s.n===g.slot_n)?.hora||''} — ${a?.nombre||'?'} · ${g.curso}</option>`;}).join('')
-    :'<option value="">— No hay ausencias este día —</option>';
-  if(preselect) sel.value=preselect;
-}
-
-function addATramo(preSlot){
-  if(nAt>=3) return; nAt++;
-  const n=nAt;
-  const slotOpts=SLOTS.filter(s=>!s.recreo).map(s=>`<option value="${s.n}"${preSlot==s.n?' selected':''}>${s.n}. ${s.hora}</option>`).join('');
-  const def=SLOTS.find(s=>s.n===(preSlot||1));
-  const[di,df]=(def?.hora||'08:15–09:10').split('–');
-  const div=document.createElement('div');
-  div.className='tc'; div.id='at'+n;
-  div.innerHTML=`<div class="tc-hd"><span class="tc-l">Tramo ${n}</span>${n>1?`<button class="rmb" onclick="rmAt(${n})">×</button>`:''}</div>
-    <div class="g3" style="margin-bottom:9px">
-      <div class="fg"><label class="fl">Período</label><select class="fc" id="at${n}s" onchange="autoH(${n})">${slotOpts}</select></div>
-      <div class="fg"><label class="fl">Hora inicio</label><input class="fc" type="time" id="at${n}i" value="${di}"></div>
-      <div class="fg"><label class="fl">Hora fin</label><input class="fc" type="time" id="at${n}f" value="${df}"></div>
-    </div>
-    <div class="fg"><label class="fl">Tipo</label>
-      <select class="fc" id="at${n}t"><option>Aula</option><option>Patio</option><option>Pasillo</option><option>Biblioteca</option><option>Despacho</option><option>Otro</option></select>
-    </div>`;
-  document.getElementById('aTramos').appendChild(div);
-  document.getElementById('aTramosBtn').style.display=nAt>=3?'none':'block';
-}
-function rmAt(n){document.getElementById('at'+n)?.remove();nAt--;document.getElementById('aTramosBtn').style.display='block';}
-function autoH(n){
-  const sl=SLOTS.find(s=>s.n===parseInt(document.getElementById('at'+n+'s').value));
-  if(!sl) return;
-  const[i,f]=sl.hora.split('–');
-  document.getElementById('at'+n+'i').value=i;
-  document.getElementById('at'+n+'f').value=f;
-}
-
+function updateGuardiaSelect(pre){const fecha=document.getElementById('aFecha').value;const gs=guardias.filter(g=>g.fecha===fecha);const sel=document.getElementById('aGuardia');sel.innerHTML=gs.length?gs.map(g=>{const a=profs.find(p=>p.id===g.ausente_id);return`<option value="${g.id}">${SLOTS.find(s=>s.n===g.slot_n)?.hora||''} — ${a?.nombre||'?'} · ${g.curso}</option>`;}).join(''):'<option value="">— No hay ausencias —</option>';if(pre)sel.value=pre;}
 async function saveApuntar(){
-  const profId=parseInt(document.getElementById('aProfId').value);
-  const gid=parseInt(document.getElementById('aGuardia').value);
+  const profId=parseInt(document.getElementById('aProfId').value),gid=parseInt(document.getElementById('aGuardia').value);
   if(!gid){showToast('Selecciona una guardia');return;}
-  const tramos=[];
-  for(let i=1;i<=nAt+3;i++){
-    if(!document.getElementById('at'+i)) continue;
-    tramos.push({
-      slot:parseInt(document.getElementById('at'+i+'s')?.value),
-      ini:document.getElementById('at'+i+'i')?.value,
-      fin:document.getElementById('at'+i+'f')?.value,
-      tipo:document.getElementById('at'+i+'t')?.value,
-    });
-  }
-  if(!tramos.length){showToast('Añade al menos un tramo');return;}
-  const btn=document.getElementById('btnSaveA');
-  btn.disabled=true; btn.textContent='Guardando…';
-  const{error}=await sb.from('coberturas').upsert(
-    {guardia_id:gid,profesor_id:profId,tramos},
-    {onConflict:'guardia_id,profesor_id'}
-  );
-  btn.disabled=false; btn.textContent='Confirmar';
-  if(error){showToast('Error: '+error.message);return;}
-  cm('mApuntar');
-  showToast(`${profs.find(x=>x.id===profId)?.nombre} apuntado/a ✓`);
+  const tramos=[];for(let i=1;i<=numTramos;i++){if(!document.getElementById('at'+i))continue;tramos.push({slot:parseInt(document.getElementById('at'+i+'s')?.value),ini:document.getElementById('at'+i+'i')?.value,fin:document.getElementById('at'+i+'f')?.value,tipo:document.getElementById('at'+i+'t')?.value});}
+  const btn=document.getElementById('btnSaveA');btn.disabled=true;btn.textContent='Guardando…';
+  const{error}=await sb.from('coberturas').upsert({guardia_id:gid,profesor_id:profId,num_tramos:numTramos,tramos},{onConflict:'guardia_id,profesor_id'});
+  btn.disabled=false;btn.textContent='Confirmar';if(error){showToast('Error: '+error.message);return;}cm('mApuntar');showToast(profs.find(x=>x.id===profId)?.nombre+' apuntado/a ✓');
 }
-
-// ── MIS GUARDIAS ─────────────────────────────────
-function toggleMisView(btn){
-  misViewAll=!misViewAll;
-  btn.textContent=misViewAll?'Ver solo próximas':'Ver todo el curso';
-  renderMis();
-}
-
+// MIS GUARDIAS
+function toggleMisView(btn){misViewAll=!misViewAll;btn.textContent=misViewAll?'Ver solo próximas':'Ver todo el curso';renderMis();}
 function renderMis(){
-  const u=activeUser;
-  document.getElementById('myUser').textContent=u?u.nombre:'Selecciona tu nombre →';
-  const myCobs=coberturas.filter(c=>c.profesor_id===u?.id);
-  let myGs=guardias.filter(g=>myCobs.some(c=>c.guardia_id===g.id));
-  myGs.sort((a,b)=>a.fecha.localeCompare(b.fecha)||a.slot_n-b.slot_n);
-  if(!misViewAll){
-    const today=fmtDate(new Date());
-    myGs=myGs.filter(g=>g.fecha>=today);
-  }
-  const myMins=u?calcMins(u.id):0;
-  const dias=new Set(myGs.map(g=>g.fecha)).size;
-  document.getElementById('myStats').innerHTML=`
-    <div class="stat"><div class="stat-n" style="color:var(--ink)">${myCobs.length}</div><div class="stat-l">Total guardias</div></div>
-    <div class="stat"><div class="stat-n" style="color:var(--ink)">${fmtMins(myMins)}</div><div class="stat-l">Tiempo total</div></div>
-    <div class="stat"><div class="stat-n" style="color:var(--green)">${dias}</div><div class="stat-l">Días</div></div>
-  `;
-  const list=document.getElementById('myList');
-  if(!u){list.innerHTML='<p style="color:var(--muted)">Selecciona tu usuario en la cabecera.</p>';return;}
-  if(!myGs.length){list.innerHTML='<p style="color:var(--muted)">Sin guardias '+(misViewAll?'registradas':'próximas')+'.</p>';return;}
-  list.innerHTML=myGs.map(g=>{
-    const ausente=profs.find(p=>p.id===g.ausente_id);
-    const sl=SLOTS.find(s=>s.n===g.slot_n);
-    const cob=myCobs.find(c=>c.guardia_id===g.id);
-    const fechaD=new Date(g.fecha+'T12:00:00');
-    return`<div style="padding:14px 0;border-bottom:1px solid var(--line)">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px">
-        <div>
-          <div style="font-weight:600;font-size:14px">${fmtDateLong(fechaD)} · ${sl?.label} <span style="color:var(--muted);font-weight:400">${sl?.hora}</span></div>
-          <div class="row" style="margin-top:5px;gap:6px">
-            <span class="curso-badge">${g.curso}</span>
-            <span style="font-size:12px;color:var(--muted)">📍 ${g.aula}</span>
-            <span style="font-size:12px;color:var(--muted)">Sustituye a <strong style="color:var(--ink)">${ausente?.nombre||'?'}</strong></span>
-          </div>
-        </div>
-        <button class="btn bg xs" onclick="delCobertura(${cob?.id})">Quitar</button>
-      </div>
+  const u=activeUser;document.getElementById('myUserLbl').textContent=u?u.nombre:'—';
+  const mc=coberturas.filter(c=>c.profesor_id===u?.id);let mG=guardias.filter(g=>mc.some(c=>c.guardia_id===g.id));mG.sort((a,b)=>a.fecha.localeCompare(b.fecha)||a.slot_n-b.slot_n);
+  if(!misViewAll){const t=fmt(new Date());mG=mG.filter(g=>g.fecha>=t);}
+  const mm=u?calcMins(u.id):0,dias=new Set(mG.map(g=>g.fecha)).size;
+  document.getElementById('myStats').innerHTML=`<div class="stat"><div class="stat-n">${mc.length}</div><div class="stat-l">Total guardias</div></div><div class="stat"><div class="stat-n">${fmtMins(mm)}</div><div class="stat-l">Tiempo total</div></div><div class="stat"><div class="stat-n" style="color:var(--green)">${dias}</div><div class="stat-l">Días</div></div>`;
+  const list=document.getElementById('myList');if(!u){list.innerHTML='<p style="color:var(--muted)">Inicia sesión.</p>';return;}
+  if(!mG.length){list.innerHTML='<p style="color:var(--muted)">Sin guardias '+(misViewAll?'registradas':'próximas')+'.</p>';return;}
+  list.innerHTML=mG.map(g=>{const aus=profs.find(p=>p.id===g.ausente_id),sl=SLOTS.find(s=>s.n===g.slot_n),cob=mc.find(c=>c.guardia_id===g.id),fd=new Date(g.fecha+'T12:00:00');
+    return`<div style="padding:14px 0;border-bottom:1px solid var(--line)"><div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:8px"><div><div style="font-weight:600;font-size:14px">${fmtLong(fd)} · ${sl?.label} <span style="color:var(--muted);font-weight:400">${sl?.hora}</span></div><div class="row" style="margin-top:5px;gap:6px"><span class="curso-badge">${g.curso}</span><span style="font-size:12px;color:var(--muted)">📍 ${g.aula}</span><span style="font-size:12px;color:var(--muted)">Sustituye a <strong>${aus?.nombre||'?'}</strong></span></div></div><button class="btn bg xs" onclick="delCobertura(${cob?.id})">Quitar</button></div>
       ${g.tarea?`<div class="tarea-txt" style="margin-bottom:8px">📝 ${g.tarea}</div>`:''}
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:7px">
-        ${g.pdf_url
-          ?`<a href="${g.pdf_url}" target="_blank" class="btn bblue sm">📄 Ver PDF tarea</a>
-             <button class="btn bg sm" onclick="openPdfModal(${g.id},'${g.pdf_url}')">↑ Reemplazar PDF</button>`
-          :`<button class="btn bg sm" onclick="openPdfModal(${g.id},'')">📎 Subir PDF tarea</button>`
-        }
-      </div>
-      <div class="row" style="gap:5px">
-        ${(cob?.tramos||[]).map(t=>`<div style="background:var(--paper2);border:1px solid var(--line);border-radius:4px;padding:4px 10px;font-size:12px">${t.ini}–${t.fin} <span class="badge binfo">${t.tipo}</span></div>`).join('')}
-      </div>
-    </div>`;
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:7px">${g.pdf_url?`<a href="${g.pdf_url}" target="_blank" class="btn bblue sm">📄 Ver PDF</a><button class="btn bg sm" onclick="openPdfModal(${g.id},'${g.pdf_url}')">↑ PDF</button>`:`<button class="btn bg sm" onclick="openPdfModal(${g.id},'')">📎 Subir PDF</button>`}</div>
+      <div class="row" style="gap:5px">${(cob?.tramos||[]).map(t=>`<div style="background:var(--paper2);border:1px solid var(--line);border-radius:4px;padding:4px 10px;font-size:12px">${t.ini}-${t.fin} <span class="badge binfo">${t.tipo}</span></div>`).join('')}</div></div>`;
   }).join('');
 }
-
-// ── PROFESORES ───────────────────────────────────
+// MI HORARIO
+function renderMiHorario(){
+  const u=activeUser,body=document.getElementById('miHorarioBody');
+  if(!u){body.innerHTML='<p style="color:var(--muted)">Inicia sesión.</p>';return;}
+  const ms=horarios_prof.filter(h=>h.profesor_id===u.id);
+  if(!ms.length){body.innerHTML='<p style="color:var(--muted)">No tienes horario importado. Ve a CSV → Horario semanal de profesores.</p>';return;}
+  let h=`<div class="hprof-grid"><div class="hprof-hd">Tramo</div>${DIAS.map(d=>`<div class="hprof-hd">${d}</div>`).join('')}`;
+  SLOTS.forEach(sl=>{h+=`<div class="hprof-slot ref">T${sl.n}<br><span style="font-weight:400;font-size:10px">${sl.hora}</span></div>`;
+    if(sl.recreo)DIAS.forEach(()=>{h+=`<div class="hprof-slot recreo">Recreo</div>`;});
+    else DIAS.forEach(dia=>{const s=ms.find(x=>x.dia===dia&&x.slot_n===sl.n);
+      if(!s)h+=`<div class="hprof-slot">—</div>`;
+      else if(s.tipo==='guardia')h+=`<div class="hprof-slot guardia">🛡 GUARDIA</div>`;
+      else if(s.tipo==='libre')h+=`<div class="hprof-slot libre">Libre</div>`;
+      else h+=`<div class="hprof-slot clase">${s.grupo||''}<br><span style="font-size:10px;color:var(--muted)">${s.aula||''}</span></div>`;});
+  });
+  body.innerHTML=h+'</div>';
+}
+// AULAS
+function renderAulas(){
+  if(!aulasWeekStart)return;
+  document.getElementById('aulasWeekLbl').textContent='Semana del '+fmtES(aulasWeekStart)+' al '+fmtES(addD(aulasWeekStart,4));
+  const dbar=document.getElementById('dbarAulas');dbar.innerHTML='';
+  for(let i=0;i<5;i++){const d=addD(aulasWeekStart,i);const btn=document.createElement('button');btn.className='db'+(i===aulasDayIdx?' on':'')+(isToday(d)?' hoy':'');btn.innerHTML=DIAS[i]+'<span class="db-date">'+fmtES(d)+'</span>';const idx=i;btn.onclick=()=>{aulasDayIdx=idx;document.querySelectorAll('#dbarAulas .db').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderAulasDia();};dbar.appendChild(btn);}
+  renderAulasDia();
+}
+function renderAulasDia(){
+  const d=addD(aulasWeekStart,aulasDayIdx),iso=fmt(d),body=document.getElementById('aulasBody');
+  if(!aulas.length){body.innerHTML='<div class="card"><div class="cb"><p style="color:var(--muted)">No hay aulas. Añádelas con el botón de arriba.</p></div></div>';return;}
+  let html='';
+  SLOTS.filter(s=>!s.recreo).forEach(sl=>{
+    html+=`<div class="card" style="margin-bottom:12px"><div class="ch"><span class="ch-t">Tramo ${sl.n} — ${sl.hora} · ${sl.label}</span></div><div class="cb"><div class="aulas-grid">`;
+    aulas.forEach(a=>{const res=reservas.find(r=>r.aula_id===a.id&&r.fecha===iso&&r.slot_n===sl.n);const esMia=res&&res.profesor_id===activeUser?.id;const prof=res?profs.find(p=>p.id===res.profesor_id):null;const cls=res?(esMia?'mia':'ocupada'):'libre';
+      html+=`<div class="aula-card ${cls}"><div style="font-size:13px;font-weight:600;margin-bottom:3px">🏫 ${a.nombre}</div>${a.capacidad?`<div style="font-size:11px;color:var(--muted)">👥 ${a.capacidad}</div>`:''}${a.descripcion?`<div style="font-size:11px;color:var(--muted)">${a.descripcion}</div>`:''}<div style="margin-top:8px">${res?`<span class="badge ${esMia?'bgold-b':'bwarn'}">${esMia?'Tu reserva':'Ocupada'}</span><div style="font-size:11px;color:var(--muted);margin-top:3px">${prof?.nombre||'?'}${res.motivo?' · '+res.motivo:''}</div>${esMia?`<button class="btn bg xs" style="margin-top:6px" onclick="delReserva(${res.id})">Cancelar</button>`:''}`:`<span class="badge bok">Libre</span><button class="btn bg sm" style="margin-top:6px;display:block" onclick="openReservar(${a.id},'${a.nombre}',${a.capacidad},'${iso}',${sl.n})">Reservar</button>`}</div></div>`;
+    });
+    html+='</div></div></div>';
+  });
+  body.innerHTML=html;
+}
+async function saveAula(){const n=document.getElementById('aulaNom').value.trim();if(!n){showToast('Escribe un nombre');return;}const{error}=await sb.from('aulas').insert({nombre:n,capacidad:parseInt(document.getElementById('aulaCap').value)||0,descripcion:document.getElementById('aulaDesc').value.trim()});if(error){showToast('Error: '+error.message);return;}document.getElementById('aulaNom').value='';document.getElementById('aulaCap').value='';document.getElementById('aulaDesc').value='';cm('mAddAula');showToast('Aula añadida ✓');}
+function openReservar(aid,nom,cap,iso,sn){resAulaId=aid;document.getElementById('resAulaNom').textContent=nom;document.getElementById('resAulaInfo').textContent=cap?'Capacidad: '+cap+' alumnos':'';document.getElementById('resFecha').value=iso;document.getElementById('resSlot').innerHTML=SLOTS.filter(s=>!s.recreo).map(s=>`<option value="${s.n}"${s.n===sn?' selected':''}>${s.n}. ${s.hora}</option>`).join('');document.getElementById('resMotivo').value='';openModal('mReservar');}
+async function saveReserva(){if(!activeUser){showToast('Inicia sesión');return;}const fecha=document.getElementById('resFecha').value,sn=parseInt(document.getElementById('resSlot').value);if(reservas.find(r=>r.aula_id===resAulaId&&r.fecha===fecha&&r.slot_n===sn)){showToast('Ya está reservada en ese tramo');return;}const{error}=await sb.from('reservas').insert({aula_id:resAulaId,profesor_id:activeUser.id,fecha,slot_n:sn,motivo:document.getElementById('resMotivo').value.trim()});if(error){showToast('Error: '+error.message);return;}cm('mReservar');showToast('Aula reservada ✓');}
+async function delReserva(id){await sb.from('reservas').delete().eq('id',id);showToast('Reserva cancelada');}
+// PROFESORES
 function renderProfs(){
   document.getElementById('profCnt').textContent=profs.length+' profesores';
-  const list=document.getElementById('profList');
-  if(!profs.length){list.innerHTML='<p style="color:var(--muted)">Sin profesores registrados.</p>';return;}
-  const sorted=[...profs].map(p=>({...p,mins:calcMins(p.id)})).sort((a,b)=>a.mins-b.mins);
-  const maxMins=sorted[sorted.length-1]?.mins||1;
-  list.innerHTML=`<div style="font-size:11px;color:var(--muted);margin-bottom:12px">Ordenados por minutos acumulados · El primero tiene prioridad para ser asignado</div>`
-  +sorted.map((p,idx)=>{
-    const ausente=guardias.filter(g=>g.ausente_id===p.id).length;
-    const pct=Math.round((p.mins/maxMins)*100);
-    const rc=idx===0?'#1e8449':idx===1?'#f5a623':idx===2?'#c0392b':'var(--muted)';
-    return`<div class="prow">
-      <div style="font-family:'Instrument Serif',serif;font-size:19px;font-weight:700;color:${rc};width:26px;flex-shrink:0">${idx+1}</div>
+  const list=document.getElementById('profList');if(!profs.length){list.innerHTML='<p style="color:var(--muted)">Sin profesores.</p>';return;}
+  const srt=[...profs].map(p=>({...p,mins:calcMins(p.id)})).sort((a,b)=>a.mins-b.mins);const mx=srt[srt.length-1]?.mins||1;
+  list.innerHTML='<div style="font-size:11px;color:var(--muted);margin-bottom:12px">Ordenados por minutos acumulados · Menor = más prioridad</div>'
+  +srt.map((p,i)=>{const aus=guardias.filter(g=>g.ausente_id===p.id).length,pct=Math.round((p.mins/mx)*100),rc=i===0?'#1e8449':i===1?'var(--gold)':i===2?'var(--red)':'var(--muted)';
+    return`<div class="prow"><div style="font-family:'Instrument Serif',serif;font-size:19px;font-weight:700;color:${rc};width:26px;flex-shrink:0">${i+1}</div>
       <div class="pav" style="background:${p.color}">${ini(p.nombre)}</div>
-      <div style="flex:1;min-width:0">
-        <div class="pname">${p.nombre}</div>
+      <div style="flex:1;min-width:0"><div class="pname">${p.nombre} ${p.es_jefatura?'<span class="badge binfo">Jefatura</span>':''} ${p.registrado?'<span class="badge bok">✓</span>':'<span class="badge bgrey">Sin cuenta</span>'}</div>
         <div class="pdept">${p.departamento||'—'}</div>
-        <div style="margin-top:5px;background:var(--paper2);border-radius:3px;height:5px;width:100%;max-width:200px">
-          <div style="background:${rc};height:5px;border-radius:3px;width:${pct}%;transition:width .4s"></div>
-        </div>
+        <div style="margin-top:5px;background:var(--paper2);border-radius:3px;height:5px;width:100%;max-width:200px"><div style="background:${rc};height:5px;border-radius:3px;width:${pct}%"></div></div>
       </div>
       <div class="mla" style="display:flex;align-items:center;gap:14px">
         <div style="text-align:right"><div style="font-family:'Instrument Serif',serif;font-size:22px">${fmtMins(p.mins)}</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase">guardias</div></div>
-        <div style="text-align:right"><div style="font-family:'Instrument Serif',serif;font-size:22px;color:var(--muted)">${ausente}</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase">ausencias</div></div>
-        <button class="btn bg xs" onclick="delProf(${p.id})">×</button>
-      </div>
-    </div>`;
+        <div style="text-align:right"><div style="font-family:'Instrument Serif',serif;font-size:22px;color:var(--muted)">${aus}</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase">ausencias</div></div>
+        ${activeUser?.es_jefatura?`<button class="btn bg xs" onclick="delProf(${p.id})">×</button>`:''}
+      </div></div>`;
   }).join('');
 }
-
-async function saveProf(){
-  const nombre=document.getElementById('pNom').value.trim();
-  if(!nombre) return;
-  const btn=document.getElementById('btnSaveP');
-  btn.disabled=true; btn.textContent='Guardando…';
-  const{error}=await sb.from('profesores').insert({nombre,departamento:document.getElementById('pDep').value||'—',color:document.getElementById('pCol').value});
-  btn.disabled=false; btn.textContent='Añadir';
-  if(error){showToast('Error: '+error.message);return;}
-  document.getElementById('pNom').value=''; document.getElementById('pDep').value='';
-  cm('mAddProf'); showToast('Profesor/a añadido/a ✓');
+async function saveProf(){const n=document.getElementById('pNom').value.trim();if(!n)return;const btn=document.getElementById('btnSaveP');btn.disabled=true;btn.textContent='Guardando…';const{error}=await sb.from('profesores').insert({nombre:n,departamento:document.getElementById('pDep').value||'—',color:document.getElementById('pCol').value,es_jefatura:document.getElementById('pJef').checked});btn.disabled=false;btn.textContent='Añadir';if(error){showToast('Error: '+error.message);return;}document.getElementById('pNom').value='';document.getElementById('pDep').value='';document.getElementById('pJef').checked=false;cm('mAddProf');showToast('Añadido/a ✓');}
+async function delProf(id){if(!confirm('¿Eliminar?'))return;await sb.from('profesores').delete().eq('id',id);showToast('Eliminado');}
+// ASIGNACIONES
+function openAsignar(){document.getElementById('asSlot').innerHTML=SLOTS.filter(s=>!s.recreo).map(s=>`<option value="${s.n}">Tramo ${s.n} — ${s.hora}</option>`).join('');renderAsignList();openModal('mAsignar');}
+function renderAsignList(){const dia=document.getElementById('asDia')?.value,sn=parseInt(document.getElementById('asSlot')?.value);if(!dia||!sn)return;const cur=asignaciones.filter(a=>a.dia===dia&&a.slot_n===sn).map(a=>a.profesor_id);const srt=[...profs].map(p=>({...p,mins:calcMins(p.id)})).sort((a,b)=>a.mins-b.mins);document.getElementById('asignList').innerHTML=srt.map(p=>`<label style="display:flex;align-items:center;gap:10px;padding:9px 11px;background:${cur.includes(p.id)?'#edf7f0':'white'};border:1px solid ${cur.includes(p.id)?'#a9dfbf':'var(--line)'};border-radius:6px;cursor:pointer"><input type="checkbox" id="asc_${p.id}" ${cur.includes(p.id)?'checked':''} style="accent-color:var(--ink);width:16px;height:16px"><div class="pav" style="background:${p.color};width:28px;height:28px;font-size:10px">${ini(p.nombre)}</div><div style="flex:1"><div style="font-size:13px;font-weight:500">${p.nombre}</div><div style="font-size:11px;color:var(--muted)">${fmtMins(p.mins)} acumulados</div></div></label>`).join('');}
+async function saveAsignaciones(){const dia=document.getElementById('asDia').value,sn=parseInt(document.getElementById('asSlot').value);await sb.from('asignaciones').delete().eq('dia',dia).eq('slot_n',sn);const chk=profs.filter(p=>document.getElementById('asc_'+p.id)?.checked);if(chk.length)await sb.from('asignaciones').insert(chk.map(p=>({dia,slot_n:sn,profesor_id:p.id})));cm('mAsignar');showToast(chk.length+' prof. asignados ✓');}
+// CSV
+const TPLS={horario:'fecha;tramo;ausente;curso;aula;tarea
+2025-09-15;1;Ana García;3ºESO A;Aula 12;Ejercicios págs. 45-46
+',claustro:'nombre;departamento
+Ana García López;Matemáticas
+Luis Martín Pérez;Historia
+',asign:'dia;tramo;profesor
+Lunes;1;Ana García
+Lunes;1;Luis Martín
+Martes;2;Clara Ruiz
+',horprof:'profesor;dia;tramo;tipo;grupo;aula
+Ana García;Lunes;1;clase;3ºESO A;Aula 12
+Ana García;Lunes;2;guardia;;
+Ana García;Lunes;3;recreo;;
+Ana García;Martes;1;libre;;
+'};
+const TPLN={horario:'horario.csv',claustro:'claustro.csv',asign:'guardias_tramos.csv',horprof:'horario_prof.csv'};
+function dlTpl(t){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([TPLS[t]],{type:'text/csv;charset=utf-8'}));a.download=TPLN[t];a.click();}
+function handleDrop(e,t){e.preventDefault();e.currentTarget.classList.remove('drag');if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0],t);}
+function handleFile(f,t){if(!f)return;const r=new FileReader();r.onload=ev=>parseCSV(ev.target.result,t);r.readAsText(f,'UTF-8');}
+function parseCSV(text,t){const lines=text.trim().split(/
+?
+/).filter(l=>l.trim());if(lines.length<2){showToast('CSV vacío');return;}const sep=lines[0].includes(';')?';':',';const hdr=lines[0].split(sep).map(h=>h.trim().toLowerCase().replace(/^"|"$/g,''));csvR[t]=lines.slice(1).map(l=>{const v=l.split(sep).map(x=>x.trim().replace(/^"|"$/g,''));const r={};hdr.forEach((h,j)=>r[h]=v[j]||'');return r;}).filter(r=>Object.values(r).some(v=>v));const bx={'H':'csvHBox','P':'csvPBox','A':'csvABox','HP':'csvHPBox'}[t];const cn={'H':'csvHCnt','P':'csvPCnt','A':'csvACnt','HP':'csvHPCnt'}[t];const tb={'H':'prevHTbl','P':'prevPTbl','A':'prevATbl','HP':'prevHPTbl'}[t];document.getElementById(cn).textContent=csvR[t].length+' filas';document.getElementById(bx).style.display='block';const tbl=document.getElementById(tb);tbl.innerHTML=`<thead><tr>${hdr.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${csvR[t].slice(0,10).map(r=>`<tr>${hdr.map(h=>`<td>${r[h]||''}</td>`).join('')}</tr>`).join('')}${csvR[t].length>10?`<tr><td colspan="${hdr.length}" style="color:var(--muted);text-align:center">…y ${csvR[t].length-10} más</td></tr>`:''}</tbody>`;}
+async function importCSV(t){
+  const bi={'H':'btnImportH','P':'btnImportP','A':'btnImportA','HP':'btnImportHP'}[t];const bx={'H':'csvHBox','P':'csvPBox','A':'csvABox','HP':'csvHPBox'}[t];
+  const btn=document.getElementById(bi);btn.disabled=true;btn.textContent='Importando…';let imp=0,sk=0;
+  if(t==='H'){for(const r of csvR.H){const fecha=(r.fecha||'').trim(),sn=parseInt(r.tramo),an=(r.ausente||'').trim();if(!fecha||!sn||!an){sk++;continue;}const sl=SLOTS.find(s=>s.n===sn);if(!sl||sl.recreo){sk++;continue;}let a=profs.find(p=>p.nombre.toLowerCase()===an.toLowerCase());if(!a){const{data,e}=await sb.from('profesores').insert({nombre:an,departamento:'Por asignar',color:PAL[profs.length%PAL.length]}).select().single();if(e){sk++;continue;}profs.push(data);a=data;}const{error}=await sb.from('guardias').insert({fecha,slot_n:sn,ausente_id:a.id,curso:(r.curso||'—').trim(),aula:(r.aula||'—').trim(),motivo:'',tarea:(r.tarea||'').trim(),pdf_url:''});if(!error)imp++;else sk++;}}
+  else if(t==='P'){for(const r of csvR.P){const n=(r.nombre||'').trim();if(!n){sk++;continue;}if(profs.find(p=>p.nombre.toLowerCase()===n.toLowerCase())){sk++;continue;}const{data,error}=await sb.from('profesores').insert({nombre:n,departamento:(r.departamento||'—').trim(),color:PAL[profs.length%PAL.length]}).select().single();if(!error){profs.push(data);imp++;}else sk++;}}
+  else if(t==='A'){await sb.from('asignaciones').delete().neq('id',0);const ins=[];for(const r of csvR.A){const dia=(r.dia||'').trim(),sn=parseInt(r.tramo),pn=(r.profesor||'').trim();if(!dia||!sn||!pn||!DIAS.includes(dia)){sk++;continue;}let p=profs.find(x=>x.nombre.toLowerCase()===pn.toLowerCase());if(!p){const{data,e}=await sb.from('profesores').insert({nombre:pn,departamento:'Por asignar',color:PAL[profs.length%PAL.length]}).select().single();if(e){sk++;continue;}profs.push(data);p=data;}ins.push({dia,slot_n:sn,profesor_id:p.id});imp++;}if(ins.length)await sb.from('asignaciones').insert(ins);}
+  else if(t==='HP'){await sb.from('horarios_prof').delete().neq('id',0);const ins=[];for(const r of csvR.HP){const pn=(r.profesor||'').trim(),dia=(r.dia||'').trim(),sn=parseInt(r.tramo);if(!pn||!dia||!sn){sk++;continue;}let p=profs.find(x=>x.nombre.toLowerCase()===pn.toLowerCase());if(!p){const{data,e}=await sb.from('profesores').insert({nombre:pn,departamento:'Por asignar',color:PAL[profs.length%PAL.length]}).select().single();if(e){sk++;continue;}profs.push(data);p=data;}ins.push({profesor_id:p.id,dia,slot_n:sn,tipo:(r.tipo||'clase').trim(),grupo:(r.grupo||'').trim(),aula:(r.aula||'').trim()});imp++;}if(ins.length)await sb.from('horarios_prof').insert(ins);}
+  btn.disabled=false;btn.textContent='✓ Importar';document.getElementById(bx).style.display='none';
+  showToast('✓ '+imp+' importados'+(sk?' · '+sk+' omitidos':''));if(t==='H')goTo('horario',document.querySelector('.nb'));
 }
-async function delProf(id){
-  if(!confirm('¿Eliminar este profesor?')) return;
-  await sb.from('profesores').delete().eq('id',id);
-  showToast('Profesor eliminado');
-}
-
-// ── ASIGNACIONES ─────────────────────────────────
-function openAsignar(){
-  document.getElementById('asSlot').innerHTML=SLOTS.filter(s=>!s.recreo).map(s=>`<option value="${s.n}">Tramo ${s.n} — ${s.hora}</option>`).join('');
-  renderAsignList();
-  openModal('mAsignar');
-}
-function renderAsignList(){
-  const dia=document.getElementById('asDia')?.value;
-  const slotN=parseInt(document.getElementById('asSlot')?.value);
-  if(!dia||!slotN) return;
-  const current=asignaciones.filter(a=>a.dia===dia&&a.slot_n===slotN).map(a=>a.profesor_id);
-  const sorted=[...profs].map(p=>({...p,mins:calcMins(p.id)})).sort((a,b)=>a.mins-b.mins);
-  document.getElementById('asignList').innerHTML=sorted.map(p=>`
-    <label style="display:flex;align-items:center;gap:10px;padding:9px 11px;background:${current.includes(p.id)?'#edf7f0':'white'};border:1px solid ${current.includes(p.id)?'#a9dfbf':'var(--line)'};border-radius:6px;cursor:pointer;transition:all .12s">
-      <input type="checkbox" id="asc_${p.id}" ${current.includes(p.id)?'checked':''} style="accent-color:var(--ink);width:16px;height:16px">
-      <div class="pav" style="background:${p.color};width:28px;height:28px;font-size:10px">${ini(p.nombre)}</div>
-      <div style="flex:1"><div style="font-size:13px;font-weight:500">${p.nombre}</div><div style="font-size:11px;color:var(--muted)">${p.departamento||'—'} · ${fmtMins(p.mins)} acumulados</div></div>
-    </label>`).join('');
-}
-async function saveAsignaciones(){
-  const btn=document.getElementById('btnSaveAs');
-  btn.disabled=true; btn.textContent='Guardando…';
-  const dia=document.getElementById('asDia').value;
-  const slotN=parseInt(document.getElementById('asSlot').value);
-  await sb.from('asignaciones').delete().eq('dia',dia).eq('slot_n',slotN);
-  const checked=profs.filter(p=>document.getElementById('asc_'+p.id)?.checked);
-  if(checked.length) await sb.from('asignaciones').insert(checked.map(p=>({dia,slot_n:slotN,profesor_id:p.id})));
-  btn.disabled=false; btn.textContent='Guardar';
-  cm('mAsignar');
-  showToast(`${checked.length} prof. asignados al tramo ${slotN} del ${dia}`);
-}
-
-// ── USER PICKER ──────────────────────────────────
-function openSelUser(){
-  document.getElementById('userPick').innerHTML=profs.map(p=>`
-    <div class="prow" style="cursor:pointer" onclick="setUser(${p.id})">
-      <div class="pav" style="background:${p.color}">${ini(p.nombre)}</div>
-      <div><div class="pname">${p.nombre}</div><div class="pdept">${p.departamento||'—'}</div></div>
-      ${activeUser?.id===p.id?'<div class="mla"><span class="badge bok">Activo</span></div>':''}
-    </div>`).join('');
-  openModal('mUser');
-}
-function setUser(id){
-  const u=profs.find(p=>p.id===id); if(!u) return;
-  setUserLocal(u); cm('mUser'); renderMis();
-  showToast(`Hola, ${u.nombre.split(' ')[0]}!`);
-}
-function setUserLocal(u){
-  activeUser=u;
-  localStorage.setItem('guardias_user_id',u.id);
-  document.getElementById('hAv').textContent=ini(u.nombre);
-  document.getElementById('hAv').style.background=u.color;
-  document.getElementById('hName').textContent=u.nombre.split(' ')[0];
-}
-
-// ── CSV HORARIO ───────────────────────────────────
-let csvHRows=[];
-function dlHorarioTemplate(){
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob(['fecha;tramo;ausente;curso;aula;tarea\n2025-09-15;1;Ana García;3ºESO A;Aula 12;Ejercicios págs. 45-46\n2025-09-15;4;Luis Martín;1ºBACH B;Aula 7;Leer capítulo 3\n'],{type:'text/csv;charset=utf-8'}));
-  a.download='plantilla_horario.csv'; a.click();
-}
-function handleDropH(e){e.preventDefault();document.getElementById('dzHorario').classList.remove('drag');if(e.dataTransfer.files[0])handleFileH(e.dataTransfer.files[0]);}
-function handleFileH(f){if(!f)return;const r=new FileReader();r.onload=ev=>parseCSVH(ev.target.result);r.readAsText(f,'UTF-8');}
-function parseCSVH(text){
-  const lines=text.trim().split(/\r?\n/).filter(l=>l.trim());
-  if(lines.length<2){showToast('CSV vacío');return;}
-  const sep=lines[0].includes(';')?';':',';
-  const hdr=lines[0].split(sep).map(h=>h.trim().toLowerCase().replace(/^"|"$/g,''));
-  csvHRows=lines.slice(1).map(l=>{const v=l.split(sep).map(x=>x.trim().replace(/^"|"$/g,''));const r={};hdr.forEach((h,j)=>r[h]=v[j]||'');return r;});
-  const tbl=document.getElementById('prevHTbl');
-  tbl.innerHTML=`<thead><tr>${hdr.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>
-    ${csvHRows.slice(0,10).map(r=>`<tr>${hdr.map(h=>`<td>${r[h]||''}</td>`).join('')}</tr>`).join('')}
-    ${csvHRows.length>10?`<tr><td colspan="${hdr.length}" style="color:var(--muted);text-align:center">…y ${csvHRows.length-10} más</td></tr>`:''}
-  </tbody>`;
-  document.getElementById('csvHCnt').textContent=csvHRows.length+' filas';
-  document.getElementById('csvHBox').style.display='block';
-}
-async function importHorario(){
-  const btn=document.getElementById('btnImportH');
-  btn.disabled=true; btn.textContent='Importando…';
-  let imp=0,skip=0;
-  for(const row of csvHRows){
-    const fecha=(row.fecha||'').trim();
-    const sn=parseInt(row.tramo);
-    const ausNom=(row.ausente||'').trim();
-    if(!fecha||!sn||!ausNom){skip++;continue;}
-    const sl=SLOTS.find(s=>s.n===sn);
-    if(!sl||sl.recreo){skip++;continue;}
-    let ausente=profs.find(p=>p.nombre.toLowerCase()===ausNom.toLowerCase());
-    if(!ausente){
-      const{data,error}=await sb.from('profesores').insert({nombre:ausNom,departamento:'Por asignar',color:PALETTE[profs.length%PALETTE.length]}).select().single();
-      if(error){skip++;continue;}
-      profs.push(data); ausente=data;
-    }
-    const{error}=await sb.from('guardias').insert({
-      fecha, slot_n:sn, ausente_id:ausente.id,
-      curso:(row.curso||'—').trim(), aula:(row.aula||'—').trim(),
-      motivo:'', tarea:(row.tarea||'').trim(), pdf_url:''
-    });
-    if(!error) imp++; else skip++;
-  }
-  btn.disabled=false; btn.textContent='✓ Importar';
-  document.getElementById('csvHBox').style.display='none';
-  showToast(`✓ ${imp} guardias importadas${skip?` · ${skip} omitidas`:''}`);
-  goTo('horario',document.querySelector('.nb'));
-}
-
-// ── CSV CLAUSTRO ──────────────────────────────────
-let csvPRows=[];
-function dlClaustroTemplate(){
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob(['nombre;departamento\nAna García López;Matemáticas\nLuis Martín Pérez;Historia y Geografía\nClara Ruiz Sanz;Inglés\n'],{type:'text/csv;charset=utf-8'}));
-  a.download='plantilla_claustro.csv'; a.click();
-}
-function handleDropP(e){e.preventDefault();document.getElementById('dzProf').classList.remove('drag');if(e.dataTransfer.files[0])handleFileP(e.dataTransfer.files[0]);}
-function handleFileP(f){if(!f)return;const r=new FileReader();r.onload=ev=>parseCSVP(ev.target.result);r.readAsText(f,'UTF-8');}
-function parseCSVP(text){
-  const lines=text.trim().split(/\r?\n/).filter(l=>l.trim());
-  if(lines.length<2){showToast('CSV vacío');return;}
-  const sep=lines[0].includes(';')?';':',';
-  const hdr=lines[0].split(sep).map(h=>h.trim().toLowerCase().replace(/^"|"$/g,''));
-  csvPRows=lines.slice(1).map(l=>{const v=l.split(sep).map(x=>x.trim().replace(/^"|"$/g,''));const r={};hdr.forEach((h,j)=>r[h]=v[j]||'');return r;}).filter(r=>r.nombre);
-  const tbl=document.getElementById('prevPTbl');
-  tbl.innerHTML=`<thead><tr>${hdr.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>
-    ${csvPRows.slice(0,12).map(r=>`<tr>${hdr.map(h=>`<td>${r[h]||''}</td>`).join('')}</tr>`).join('')}
-    ${csvPRows.length>12?`<tr><td colspan="${hdr.length}" style="color:var(--muted);text-align:center">…y ${csvPRows.length-12} más</td></tr>`:''}
-  </tbody>`;
-  document.getElementById('csvPCnt').textContent=csvPRows.length+' profesores';
-  document.getElementById('csvPBox').style.display='block';
-}
-async function importClaustro(){
-  const btn=document.getElementById('btnImportP');
-  btn.disabled=true; btn.textContent='Importando…';
-  let added=0,skipped=0;
-  for(const row of csvPRows){
-    const nombre=(row.nombre||'').trim();
-    if(!nombre){skipped++;continue;}
-    if(profs.find(p=>p.nombre.toLowerCase()===nombre.toLowerCase())){skipped++;continue;}
-    const{data,error}=await sb.from('profesores').insert({nombre,departamento:(row.departamento||'—').trim(),color:PALETTE[profs.length%PALETTE.length]}).select().single();
-    if(!error){profs.push(data);added++;}else{skipped++;}
-  }
-  btn.disabled=false; btn.textContent='✓ Importar';
-  document.getElementById('csvPBox').style.display='none';
-  showToast(`✓ ${added} añadidos${skipped?` · ${skipped} ya existían`:''}`);
-  if(added>0) goTo('profs',document.querySelectorAll('.nb')[2]);
-}
-
-// ── CSV ASIGNACIONES ──────────────────────────────
-let csvAsignRows=[];
-function dlAsignTemplate(){
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob(['dia;tramo;profesor\nLunes;1;Ana García\nLunes;1;Luis Martín\nMartes;2;Clara Ruiz\n'],{type:'text/csv;charset=utf-8'}));
-  a.download='plantilla_horario_guardias.csv'; a.click();
-}
-function handleDropAsign(e){e.preventDefault();document.getElementById('dzAsign').classList.remove('drag');if(e.dataTransfer.files[0])handleFileAsign(e.dataTransfer.files[0]);}
-function handleFileAsign(f){if(!f)return;const r=new FileReader();r.onload=ev=>parseCSVAsign(ev.target.result);r.readAsText(f,'UTF-8');}
-function parseCSVAsign(text){
-  const lines=text.trim().split(/\r?\n/).filter(l=>l.trim());
-  if(lines.length<2){showToast('CSV vacío');return;}
-  const sep=lines[0].includes(';')?';':',';
-  const hdr=lines[0].split(sep).map(h=>h.trim().toLowerCase().replace(/^"|"$/g,''));
-  csvAsignRows=lines.slice(1).map(l=>{const v=l.split(sep).map(x=>x.trim().replace(/^"|"$/g,''));const r={};hdr.forEach((h,j)=>r[h]=v[j]||'');return r;}).filter(r=>r.dia&&r.tramo&&r.profesor);
-  const tbl=document.getElementById('prevAsignTbl');
-  tbl.innerHTML=`<thead><tr>${hdr.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>
-    ${csvAsignRows.slice(0,12).map(r=>`<tr>${hdr.map(h=>`<td>${r[h]||''}</td>`).join('')}</tr>`).join('')}
-    ${csvAsignRows.length>12?`<tr><td colspan="${hdr.length}" style="color:var(--muted);text-align:center">…y ${csvAsignRows.length-12} más</td></tr>`:''}
-  </tbody>`;
-  document.getElementById('csvAsignCnt').textContent=csvAsignRows.length+' filas';
-  document.getElementById('csvAsignBox').style.display='block';
-}
-async function importAsignaciones(){
-  const btn=document.getElementById('btnImportAsign');
-  btn.disabled=true; btn.textContent='Importando…';
-  await sb.from('asignaciones').delete().neq('id',0);
-  let imp=0,skip=0;
-  const toInsert=[];
-  for(const row of csvAsignRows){
-    const dia=(row.dia||'').trim();
-    const slotN=parseInt(row.tramo);
-    const profNom=(row.profesor||'').trim();
-    if(!dia||!slotN||!profNom||!DIAS.includes(dia)){skip++;continue;}
-    const sl=SLOTS.find(s=>s.n===slotN);
-    if(!sl||sl.recreo){skip++;continue;}
-    let prof=profs.find(p=>p.nombre.toLowerCase()===profNom.toLowerCase());
-    if(!prof){
-      const{data,error}=await sb.from('profesores').insert({nombre:profNom,departamento:'Por asignar',color:PALETTE[profs.length%PALETTE.length]}).select().single();
-      if(error){skip++;continue;}
-      profs.push(data); prof=data;
-    }
-    toInsert.push({dia,slot_n:slotN,profesor_id:prof.id}); imp++;
-  }
-  if(toInsert.length) await sb.from('asignaciones').insert(toInsert);
-  btn.disabled=false; btn.textContent='✓ Importar';
-  document.getElementById('csvAsignBox').style.display='none';
-  showToast(`✓ ${imp} asignaciones importadas${skip?` · ${skip} omitidas`:''}`);
-}
-
-// ── HELPERS ───────────────────────────────────────
-function calcMins(profId){
-  return coberturas.filter(c=>c.profesor_id===profId).reduce((total,c)=>{
-    return total+(c.tramos||[]).reduce((t,tr)=>{
-      if(!tr.ini||!tr.fin) return t;
-      const[ih,im]=tr.ini.split(':').map(Number);
-      const[fh,fm]=tr.fin.split(':').map(Number);
-      return t+Math.max(0,(fh*60+fm)-(ih*60+im));
-    },0);
-  },0);
-}
-function fmtMins(m){
-  if(m===0) return '0 min';
-  const h=Math.floor(m/60),mn=m%60;
-  return h>0?`${h}h${mn>0?' '+mn+'min':''}`:mn+'min';
-}
+// HELPERS
+function calcMins(id){return coberturas.filter(c=>c.profesor_id===id).reduce((tot,c)=>tot+(c.tramos||[]).reduce((t,tr)=>{if(!tr.ini||!tr.fin)return t;const[ih,im]=tr.ini.split(':').map(Number),[fh,fm]=tr.fin.split(':').map(Number);return t+Math.max(0,(fh*60+fm)-(ih*60+im));},0),0);}
+function fmtMins(m){if(m===0)return'0min';const h=Math.floor(m/60),mn=m%60;return h>0?h+'h'+(mn>0?' '+mn+'min':''):mn+'min';}
 function ini(n){return(n||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();}
-function shortName(n){const p=(n||'').split(' ');return p[0]+(p[1]?' '+p[1][0]+'.':'');}
+function shortN(n){const p=(n||'').split(' ');return p[0]+(p[1]?' '+p[1][0]+'.':'');}
 function openModal(id){document.getElementById(id).classList.add('on');}
 function cm(id){document.getElementById(id).classList.remove('on');}
 document.querySelectorAll('.ov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('on');}));
 function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),3200);}
-
-// ── INIT ──────────────────────────────────────────
-currentWeekStart=getMondayOf(new Date());
-const todayDow=new Date().getDay();
-currentDayIdx=(todayDow>=1&&todayDow<=5)?todayDow-1:0;
-loadAll();
-setupRealtime();
+// INIT
+currentWeekStart=getMon(new Date());aulasWeekStart=getMon(new Date());
+const dow=new Date().getDay();if(dow>=1&&dow<=5){currentDayIdx=dow-1;aulasDayIdx=dow-1;}
+loadAll().then(()=>tryAutoLogin());setupRT();
 </script>
 </body>
 </html>
