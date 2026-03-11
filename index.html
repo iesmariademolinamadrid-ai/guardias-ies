@@ -749,21 +749,12 @@ function openAsignar(){document.getElementById('asSlot').innerHTML=SLOTS.filter(
 function renderAsignList(){const dia=document.getElementById('asDia')?.value,sn=parseInt(document.getElementById('asSlot')?.value);if(!dia||!sn)return;const cur=asignaciones.filter(a=>a.dia===dia&&a.slot_n===sn).map(a=>a.profesor_id);const srt=[...profs].map(p=>({...p,mins:calcMins(p.id)})).sort((a,b)=>a.mins-b.mins);document.getElementById('asignList').innerHTML=srt.map(p=>`<label style="display:flex;align-items:center;gap:10px;padding:9px 11px;background:${cur.includes(p.id)?'#edf7f0':'white'};border:1px solid ${cur.includes(p.id)?'#a9dfbf':'var(--line)'};border-radius:6px;cursor:pointer"><input type="checkbox" id="asc_${p.id}" ${cur.includes(p.id)?'checked':''} style="accent-color:var(--ink);width:16px;height:16px"><div class="pav" style="background:${p.color};width:28px;height:28px;font-size:10px">${ini(p.nombre)}</div><div style="flex:1"><div style="font-size:13px;font-weight:500">${p.nombre}</div><div style="font-size:11px;color:var(--muted)">${fmtMins(p.mins)} acumulados</div></div></label>`).join('');}
 async function saveAsignaciones(){const dia=document.getElementById('asDia').value,sn=parseInt(document.getElementById('asSlot').value);await sb.from('asignaciones').delete().eq('dia',dia).eq('slot_n',sn);const chk=profs.filter(p=>document.getElementById('asc_'+p.id)?.checked);if(chk.length)await sb.from('asignaciones').insert(chk.map(p=>({dia,slot_n:sn,profesor_id:p.id})));cm('mAsignar');showToast(chk.length+' prof. asignados ✓');}
 // CSV
-const TPLS={horario:'fecha;tramo;ausente;curso;aula;tarea
-2025-09-15;1;Ana García;3ºESO A;Aula 12;Ejercicios págs. 45-46
-',claustro:'nombre;departamento
-Ana García López;Matemáticas
-Luis Martín Pérez;Historia
-',asign:'dia;tramo;profesor
-Lunes;1;Ana García
-Lunes;1;Luis Martín
-Martes;2;Clara Ruiz
-',horprof:'profesor;dia;tramo;tipo;grupo;aula
-Ana García;Lunes;1;clase;3ºESO A;Aula 12
-Ana García;Lunes;2;guardia;;
-Ana García;Lunes;3;recreo;;
-Ana García;Martes;1;libre;;
-'};
+const TPLS={
+  horario:'fecha;tramo;ausente;curso;aula;tarea\n2025-09-15;1;Ana Garcia;3ESO A;Aula 12;Ejercicios pags. 45-46\n',
+  claustro:'nombre;departamento\nAna Garcia Lopez;Matematicas\nLuis Martin Perez;Historia\n',
+  asign:'dia;tramo;profesor\nLunes;1;Ana Garcia\nLunes;1;Luis Martin\nMartes;2;Clara Ruiz\n',
+  horprof:'profesor;dia;tramo;tipo;grupo;aula\nAna Garcia;Lunes;1;clase;3ESO A;Aula 12\nAna Garcia;Lunes;2;guardia;;\nAna Garcia;Lunes;3;recreo;;\nAna Garcia;Martes;1;libre;;\n'
+};
 const TPLN={horario:'horario.csv',claustro:'claustro.csv',asign:'guardias_tramos.csv',horprof:'horario_prof.csv'};
 function dlTpl(t){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([TPLS[t]],{type:'text/csv;charset=utf-8'}));a.download=TPLN[t];a.click();}
 function handleDrop(e,t){e.preventDefault();e.currentTarget.classList.remove('drag');if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0],t);}
